@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two weeks to a working answer, Nadiia Nikiforova</title>
+<meta name="description" content="AI decision support for clinical hiring approvals. Sole designer, two weeks, from zero.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=general-sans@400,500,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell">
+
+  <header class="site-header">
+    <a class="site-header__name" href="../index.html">Nadiia Nikiforova</a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html#work">Work</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- 1. Gradient header ------------------------------------------------ -->
+    <div class="case-hero case-hero--healthcare case-hero--art">
+      <img class="case-hero__bg" src="../images/healthcare-header-cover.png" alt="Soft grainy gradient in pink, lilac and blue.">
+      <h1>Two weeks to a working answer</h1>
+      <p class="case-hero__summary">AI decision support for clinical hiring approvals, healthcare</p>
+      <div class="case-hero__shot case-hero__shot--image">
+        <img src="../images/healthcare-split-screen.png" alt="The split screen: the assistant's conversation on the left, the candidate's full record with checks and documents on the right.">
+      </div>
+    </div>
+
+    <!-- 2. Decision block -------------------------------------------------- -->
+    <dl class="decision">
+      <div>
+        <dt class="mono">Constraint</dt>
+        <dd>Two weeks, no brief, no access to users, an unfamiliar domain, and an existing conversational tool people had already stopped using.</dd>
+      </div>
+      <div>
+        <dt class="mono">Decision</dt>
+        <dd>Split the screen. Conversation and candidate gallery side by side, synced in both directions, rather than chat alone.</dd>
+      </div>
+      <div>
+        <dt class="mono">Trade-off</dt>
+        <dd>Keeping the full candidate card permanently available is an admission the assistant might not be enough. It costs width and creates two paths to the same information.</dd>
+      </div>
+    </dl>
+
+    <!-- 3. Summary table --------------------------------------------------- -->
+    <dl class="summary">
+      <div class="summary__fact">
+        <dt class="mono">Role</dt>
+        <dd>Sole designer, with 2 business analysts</dd>
+      </div>
+      <div class="summary__fact">
+        <dt class="mono">Timeframe</dt>
+        <dd>2 weeks, from zero</dd>
+      </div>
+      <div class="summary__fact">
+        <dt class="mono">Context</dt>
+        <dd>Pre-sale. The demo was the pitch for the contract.</dd>
+      </div>
+      <div class="summary__outcome">
+        <dt class="mono">Outcome</dt>
+        <dd>Working AI-assisted approval product. 17 steps and 6 HR interactions reduced to 4 and 1. Presented to the client, positive response.</dd>
+      </div>
+    </dl>
+
+    <!-- 4. Body ------------------------------------------------------------ -->
+    <div class="case-body">
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 01 ]</span>The situation</h2>
+        <p>A healthcare organisation in the US told my company one thing: their onboarding approval process was broken. No research, no documentation, no access to their users, no requirements.</p>
+        <p>This was pre-sale work. My company was trying to win the contract, and the demo was the pitch. If it did not convince them, there was no project.</p>
+        <p>They were not starting from nothing. They already had a conversational tool in the approval process, one that suggested next actions and listed who needed to approve. It was not working well, and part of discovery was understanding why, so the replacement did not repeat the same mistakes.</p>
+        <p>I was the only designer on it. I had never worked in healthcare.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 02 ]</span>Finding the real problem</h2>
+        <p>Week one went to research, because nobody had defined the problem.</p>
+        <p>Working with two business analysts, I ran it in three layers: onboarding in general, onboarding in healthcare, and the company's current onboarding. Alongside that I built a picture of the organisation itself, its priorities, its systems landscape, and the vendors already in its ecosystem.</p>
+        <p>Then we mapped the existing approval workflow: <strong>17 steps and 6 separate HR interactions</strong> between a job offer being sent and the hire being confirmed.</p>
+
+        <figure>
+          <img src="../images/healthcare-workflow-map.png" alt="Before and after the redesign. Above, seventeen steps in a single chain with six marked as HR interactions. Below, four steps with one HR interaction, and a loop returning a candidate to the queue.">
+          <figcaption class="mono">Above, the existing flow: seventeen steps, six of them needing HR. Below, what replaced it: four steps and one.</figcaption>
+        </figure>
+
+        <p>The step count was not the real finding. The real finding was that the HR Generalist, who makes the final call, was being handed decisions they had no way to make well. Assembling a readiness picture for one candidate meant working across four things at once: the applicant tracking system, a third-party portal, the health clearance system and an email thread. The three of us ran the research together and identified nine distinct failures. The second week was mine: I worked out which of those failures were design problems, what the interface had to do about them, and made every decision that followed. The ones that shaped the product:</p>
+        <ul>
+          <li><strong>The queue had no urgency signal.</strong> A nurse starting in three days sat next to one starting next month. Generalists worked the list in order, so the most time-sensitive candidates waited longest. That is a structural guarantee, not bad luck.</li>
+          <li><strong>"Cleared with conditions" flattened everything into one list.</strong> A TB result still pending, which does not stop anyone starting, looked exactly like a blocker that does. The Generalist could not tell who was safe to approve and who had to wait.</li>
+          <li><strong>Status existed, timelines did not.</strong> Generalists could see what was pending but not when it would be done, so they could not tell whether a candidate would clear before their start date until it was already too late.</li>
+          <li><strong>Sources disagreed silently.</strong> Candidate data arrived from four separate systems, each on its own update schedule. When two systems held different values, the interface showed one, with no indication that a conflict existed.</li>
+          <li><strong>Nothing was logged.</strong> When a start date failed, there was no timestamped record of who did what and when. The Generalist absorbed the accountability without holding the context to explain it.</li>
+          <li><strong>The existing chat was being abandoned.</strong> Reviewing twenty candidates in a morning, Generalists did not have time for a multi-message thread per person. Going straight to the source systems was faster, so they went back to working manually across tabs and used the chat only for things they could not avoid.</li>
+          <li><strong>Rework had no memory.</strong> A candidate sent back for a fix returned as a fresh review. The Generalist re-read the whole file to work out what had changed, sometimes asking about something already resolved.</li>
+        </ul>
+
+        <p class="callout">The problem I designed against: <strong>give the Generalist everything required to decide, at the moment of deciding, and make the exceptions visible instead of buried.</strong></p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 03 ]</span>Decision 1: which side of the workflow gets the AI</h2>
+        <p>I scoped AI opportunities in two directions.</p>
+        <p><strong>Candidate-facing</strong> would mean document extraction and autofill, proactive warnings about wrong file types and expired certificates, guided form completion. Real value, and it improves the quality of what arrives.</p>
+        <p><strong>Generalist-facing</strong> would mean ranking the queue, summarising readiness, flagging anomalies, surfacing what changed since last review.</p>
+        <p>I went with Generalist-facing. Better candidate submissions improve the inputs, but the delay was not in the inputs. It was at the decision point, where one person had to assemble a picture from four systems before they could act. Fixing submission quality would have made a broken decision faster to feed, not easier to make.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 04 ]</span>Decision 2: not a chat, and not a dashboard</h2>
+        <p>The obvious build for a conversational AI brief is a chat window. I did not do that, and this was the decision the whole product hangs on.</p>
+        <p>A chat-only interface makes the Generalist ask for everything, including things they can already see faster by looking. That was the failure mode of the tool they already had. A traditional queue view has the opposite problem: it makes them do their own filtering across twenty candidates every morning, which is the work they were trying to escape.</p>
+        <p>So the screen is split. <strong>Conversation on the left, the candidate gallery on the right, and the two stay in sync.</strong></p>
+
+        <figure>
+          <img src="../images/healthcare-split-screen.png" alt="The split screen: the assistant's conversation on the left, the candidate's full record with checks and documents on the right.">
+          <figcaption class="mono">Conversation on the left, the candidate's full record on the right. Acting in one updates the other.</figcaption>
+        </figure>
+
+        <p>Ask "who is most urgent" and the gallery filters in real time to that candidate, with the filter shown as a removable chip. The answer is not just text, it changes what you are looking at. Open a candidate card manually and the conversation follows you: the assistant switches context to that person, and the input shows a visible tag marking who the next question is about.</p>
+        <p>This mattered because of something I wrote down during research:</p>
+
+        <p class="callout"><strong>If using the AI takes more effort than not using it, it gets abandoned, and that is a design problem, not a training problem.</strong></p>
+
+        <p>A chat that made people describe what they wanted instead of pointing at it would have failed that test on day one.</p>
+        <p><strong>The trade-off I accepted:</strong> keeping the full candidate card permanently available is an admission that the assistant might not be enough on its own. That costs screen space and creates two paths to the same information. I took it because this is a hiring decision with compliance exposure, and forcing someone to trust a summary they cannot verify is the wrong failure mode. It also gave me a way to measure the problem.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 05 ]</span>Decision 3: people do not know what to ask</h2>
+        <p>The blank input is the failure point of every conversational interface. Someone opens it, cannot think of the right question, and goes back to the old tool.</p>
+        <p>Three things address that:</p>
+        <ul>
+          <li><strong>The empty state asks the questions for you.</strong> "Who is 100% ready?", "Who starts sooner?", "Who is most urgent?" These are not decoration, they are the three questions a Generalist actually opens the tool to answer.</li>
+          <li><strong>Every AI response ends with a follow-up.</strong> After showing outstanding items: "Would you like to see the full checklist or contact their recruiter?" The assistant carries the burden of knowing what comes next.</li>
+          <li><strong>Quick actions sit above the input</strong> for the routine queries: show checks, screening results, start date.</li>
+        </ul>
+
+        <figure>
+          <img src="../images/healthcare-empty-state.png" alt="The assistant's opening state: three suggested questions across the bottom of the conversation panel, quick actions above the input, and the candidate gallery already populated on the right.">
+          <figcaption class="mono">Three suggested questions instead of a blank prompt, and the gallery already filled, so the first move is a click rather than a sentence.</figcaption>
+        </figure>
+
+        <p>Decisions happen inside the conversation, not in a separate flow: Approve, Request clarification, Withdraw candidate. One action, not a confirmation sequence.</p>
+        <p>Two things sit behind the interface rather than in it. Every action writes to an <strong>audit trail</strong>, logging who acted, when, and against which version of the rules, so a failed start date becomes traceable instead of something the Generalist has to absorb. And a candidate returning after a fix opens with a <strong>delta summary</strong>, three lines covering what changed since last review, each one clickable through to the relevant field, so nobody re-reads a file to find one edit.</p>
+        <p>The rebuilt flow: <strong>4 steps and 1 HR interaction</strong>, from 17 and 6.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 06 ]</span>Building it</h2>
+        <p>Design and build ran in week two.</p>
+        <ul>
+          <li><strong>Gemini Deep Research</strong> for the three research layers</li>
+          <li><strong>FigJam</strong> for flows, the issue analysis, and feature prioritisation</li>
+          <li><strong>v0</strong> for the interactive build</li>
+        </ul>
+        <p>I had never used v0 before this project. I learned it during the two weeks, because a static prototype cannot show what a conversational interface feels like.</p>
+        <p>The output was a working, clickable product. Not screens.</p>
+      </section>
+
+    </div>
+
+    <!-- 5. Metrics disclosure ---------------------------------------------- -->
+    <details class="metrics">
+      <summary>
+        <span class="metrics__label">How I would have measured this</span>
+        <span class="mono metrics__hint"></span>
+      </summary>
+      <div class="metrics__body prose">
+        <p>The demo never reached production, so these are the metrics I defined, not results I can report.</p>
+        <p>The trap with an AI feature is measuring engagement. Chat usage going up would have told me nothing. The question was whether decisions got faster and more confident.</p>
+        <ul>
+          <li><strong>Time to decision</strong>, from opening a candidate to acting. The primary number.</li>
+          <li><strong>Card-open rate before deciding.</strong> The trust signal. If Generalists kept opening the full card before acting, the assistant was not giving them enough on its own. This is exactly what the split screen was designed to let me observe.</li>
+          <li><strong>Escalation rate.</strong> "Request clarification" and "Contact recruiter" were instrumentation, not menu items. Each use marked a specific information gap, traceable to the candidate that triggered it.</li>
+          <li><strong>Candidates processed per Generalist per day</strong>, as the north star, because it connects to time-to-hire, which is what leadership actually watches.</li>
+        </ul>
+      </div>
+    </details>
+
+    <!-- 6. Outcome and limits ---------------------------------------------- -->
+    <section class="case-close">
+      <h2><span class="rail-index mono">[ 07 ]</span>Outcome and limits</h2>
+      <p>My executives presented the demo to the client as the proposed solution. The feedback was positive.</p>
+      <p>What I did not have: access to real users. No interviews, no usability testing. The research was desk research and domain analysis, and every assumption in the flow stays an assumption until a working Generalist tests it.</p>
+      <p>What I would do differently: I built the assistant's capabilities from research into what Generalists need. I would now want to hear how they phrase questions unprompted before deciding what it should be able to answer.</p>
+    </section>
+
+    <!-- 7. Next project ----------------------------------------------------- -->
+    <a class="next-project" href="document-management.html">
+      <span class="next-project__thumb" aria-hidden="true">
+        <img class="next-project__cover" src="../images/documents-card-cover.png" alt="">
+        <img class="next-project__shot" src="../images/documents-document-page.png" alt="">
+      </span>
+      <span class="next-project__body">
+        <span class="mono">Next project</span>
+        <span class="next-project__title">Designing for the cost of a mistake</span>
+        <span class="next-project__eyebrow">Secure document management system</span>
+      </span>
+      <span class="next-project__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/>
+        </svg>
+      </span>
+    </a>
+
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <ul>
+      <li class="mono"><a href="mailto:nikiforovanadyaa@gmail.com">nikiforovanadyaa@gmail.com</a></li>
+      <li class="mono"><a href="https://www.linkedin.com/in/nikiforovanadya" rel="me noopener">LinkedIn</a></li>
+      <li class="mono">Warsaw, Poland</li>
+    </ul>
+  </footer>
+
+</div>
+
+</body>
+</html>

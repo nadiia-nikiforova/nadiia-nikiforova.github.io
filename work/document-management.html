@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designing for the cost of a mistake, Nadiia Nikiforova</title>
+<meta name="description" content="Secure document management system, enterprise redesign. Sole designer for a full release, from legacy audit to handoff.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=general-sans@400,500,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell">
+
+  <header class="site-header">
+    <a class="site-header__name" href="../index.html">Nadiia Nikiforova</a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html#work">Work</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- 1. Gradient header ------------------------------------------------ -->
+    <div class="case-hero case-hero--documents case-hero--art">
+      <img class="case-hero__bg" src="../images/documents-header-cover.png" alt="Soft grainy gradient in violet, near-black and cornflower blue.">
+      <h1>Designing for the cost of a mistake</h1>
+      <p class="case-hero__summary">Secure document management system, enterprise redesign</p>
+      <div class="case-hero__shot case-hero__shot--image">
+        <img src="../images/documents-document-page.png" alt="The document page: labelled panel on the left with version history open, document preview on the right, marked Controlled.">
+      </div>
+    </div>
+
+    <!-- 2. Decision block -------------------------------------------------- -->
+    <dl class="decision">
+      <div>
+        <dt class="mono">Constraint</dt>
+        <dd>Controlled information, four permission levels, live upstream integrations, and users migrating from a system they already resented.</dd>
+      </div>
+      <div>
+        <dt class="mono">Decision</dt>
+        <dd>Keep the layout users already knew, metadata left and document right, and change everything else.</dd>
+      </div>
+      <div>
+        <dt class="mono">Trade-off</dt>
+        <dd>A labelled panel takes more width than an icon strip, so the document preview is narrower than it could be.</dd>
+      </div>
+    </dl>
+
+    <!-- 3. Summary --------------------------------------------------------- -->
+    <dl class="summary">
+      <div class="summary__fact">
+        <dt class="mono">Role</dt>
+        <dd>Sole designer, with a project manager</dd>
+      </div>
+      <div class="summary__fact">
+        <dt class="mono">Timeframe</dt>
+        <dd>Around 1 year</dd>
+      </div>
+      <div class="summary__fact">
+        <dt class="mono">Context</dt>
+        <dd>Replacing a legacy system for controlled documents across global teams</dd>
+      </div>
+      <div class="summary__outcome">
+        <dt class="mono">Outcome</dt>
+        <dd>Everything I designed was approved and went into development. Release one shipped.</dd>
+      </div>
+    </dl>
+
+    <!-- 4. Body ------------------------------------------------------------ -->
+    <div class="case-body">
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 01 ]</span>The situation</h2>
+        <p>An organisation was running its controlled documents on a legacy platform that everybody complained about and nobody could work around. My job was to replace it.</p>
+        <p>I was the only designer on it, from the beginning of the project through to the end of release one, about a year. I worked with a project manager who owned requirements and ran the sessions with users. The design lead was available for difficult questions but was not on the project.</p>
+        <p>The brief, as it arrived, was that the old system was outdated and hard to use.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 02 ]</span>What the problem actually was</h2>
+        <p>I audited the existing system, reviewed its content and structure, and built a picture of what users were complaining about. Eighteen issues came out of that, and my project manager and I ran requirement sessions with real users to validate them.</p>
+        <p>Sorting by severity changed the framing entirely. The worst problems were not usability complaints. They were integrity problems:</p>
+        <ul>
+          <li>Deleting a document's metadata triggered chained deletions in connected systems</li>
+          <li>The system allowed incorrect document types, which produced classification errors downstream</li>
+          <li>Metadata did not refresh reliably, so upstream changes never arrived</li>
+          <li>People accidentally moved or deleted things</li>
+          <li>You could not tell whether a document was controlled from the folder view. It was implied by unclear icons, or buried in properties</li>
+          <li>Permissions differed between directories, and nothing in the interface told a user what they were allowed to do</li>
+          <li>Errors could not be fixed in the interface at all. They went through a support ticket</li>
+        </ul>
+        <p>Put together, that is not a system that is hard to use. It is a system that makes it easy to quietly corrupt controlled information, hard to see that it happened, and impossible to fix without someone else.</p>
+        <p class="callout">So the problem I designed against was not "modernise the interface." It was <strong>reduce the cost of a mistake</strong>: make errors harder to make, visible when they happen, and recoverable by the person who made them.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 03 ]</span>The five ideas the design rests on</h2>
+        <p>Every feature we agreed with stakeholders maps to one of these.</p>
+        <ul>
+          <li><strong>Mistakes become reversible.</strong> Version history with restore, deletion into a recycle bin rather than destruction, a checklist before deletion, a full audit trail with export.</li>
+          <li><strong>Risk becomes visible.</strong> Controlled or not-controlled shown on the document and on the folder, not hidden in properties. Flags for documents blocked by security restrictions or needing manual review. Approval status surfaced directly.</li>
+          <li><strong>Dangerous actions get blocked by role.</strong> System folders not editable by role, general users prevented from bulk-deleting files they did not upload, view blocked entirely without access rather than failing at the point of action.</li>
+          <li><strong>Finding documents stops depending on folder structure.</strong> Natural language and keyword search, results showing which keywords matched and how often, favourites, recent documents, a dashboard.</li>
+          <li><strong>The system stays in sync.</strong> Automatic updates from upstream services, automatic archiving by status, folder structures generated from record IDs rather than maintained by hand.</li>
+        </ul>
+        <p>Four user roles worked across all of this: general user, reviewer, review manager and admin, each with different permissions over documents, the review process and the system itself.</p>
+
+        <figure>
+          <img src="../images/documents-version-history.png" alt="The version history panel: the current version and a list of older versions, one selected, with Preview, Activate and Delete actions available.">
+          <figcaption class="mono">Mistakes become reversible: any earlier version can be previewed and reactivated. Recovery is a first-class action, not a support ticket.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="../images/documents-folder-controlled.png" alt="A folder listing with an Access column, each folder marked Controlled or Not controlled, and a Controlled badge on the open folder itself.">
+          <figcaption class="mono">Risk becomes visible: controlled status sits in the folder listing and on the folder itself, not buried in properties.</figcaption>
+        </figure>
+
+        <figure class="figure--constrained">
+          <img src="../images/documents-copy-blocked.png" alt="A Copy to dialog: one destination folder is greyed out, and a tooltip explains that the user's access level does not allow adding the document there and to contact the administrator.">
+          <figcaption class="mono">Blocked by role: a destination the user cannot write to is disabled and says why, instead of failing at the point of action.</figcaption>
+        </figure>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 04 ]</span>The hard part: the document page</h2>
+        <p>Most of the system used familiar patterns. Folder structures, data tables, copy and move. Those needed care, not invention.</p>
+        <p>The document page was different, and it took the largest share of my thinking. It is the one screen where everything in the system has to coexist: the document itself, its metadata, its version history, its audit log, comments, the AI assistant, and the surrounding folder, without the user losing their place.</p>
+        <p>It is also where two of the five ideas actually reach the user. Version history and the audit trail are not features on a list. They live in this panel or they may as well not exist.</p>
+
+        <h3>The layout decision</h3>
+        <p>My first version put the document preview on the left and the panel on the right, with the panel's sections reduced to a narrow strip of icon-only buttons. I rejected it for four reasons.</p>
+
+        <figure>
+          <img src="../images/documents-layout-concept.png" alt="The rejected concept: the document preview on the left, the panel on the right, its sections collapsed to a narrow strip of icon-only buttons on the far edge.">
+          <figcaption class="mono">Concept — document left, panel collapsed to icons.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="../images/documents-layout-final.png" alt="The final layout: the labelled panel on the left with the audit log open, the document preview on the right, marked Controlled.">
+          <figcaption class="mono">Shipped — labelled panel left, document right.</figcaption>
+        </figure>
+
+        <ul>
+          <li><strong>Icons alone do not carry meaning.</strong> A trash icon is universal. Version history, audit log and file details are not. Icon-only navigation works when the icons are self-evident, and these were not, so the sections got labels.</li>
+          <li><strong>Users already knew a layout.</strong> In the legacy system, metadata sat on the left and the document on the right. Keeping that mapping meant people were not relearning navigation during a migration they had not asked for.</li>
+          <li><strong>Reading order.</strong> The primary work area belongs on the left, where the eye starts.</li>
+          <li><strong>They already knew this pattern from elsewhere.</strong> These users were in Microsoft Teams every day, which uses a very similar labelled panel. Borrowing a pattern people use daily costs nothing and means no learning curve.</li>
+        </ul>
+        <p class="callout">In a redesign of a system users already resent, preserving spatial memory while changing everything else is worth more than a fresh start.</p>
+        <p><strong>The trade-off:</strong> the labelled panel takes more horizontal space than an icon strip, so the document preview is narrower. I chose comprehension over preview size, on the grounds that people open this screen to act on a document, not to read it at full width.</p>
+        <p>The file details section was also restructured into two scannable columns with a clear hierarchy, so the information users needed most was not buried.</p>
+
+        <figure>
+          <img src="../images/documents-comments.png" alt="The document page with the comments panel open: a threaded discussion with nested replies, avatars and reply controls on the left, the document on the right.">
+          <figcaption class="mono">The same panel carrying one of its heavier states: a threaded discussion with nested replies, kept legible in the column that also holds metadata, history and audit.</figcaption>
+        </figure>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 05 ]</span>When the constraints won</h2>
+        <p>I designed the home tab with a grid of documents and folders showing content previews, because people recognise documents by what is inside them far faster than by filename.</p>
+        <p>Development came back with two problems. The small animation I had designed for the title was not feasible, so the title became static. And document previews could not be rendered at all, for security reasons I was not given the full details of.</p>
+        <p>The replacement was large format icons with the title and file type. Weaker than what I wanted, and it is worth naming why it happened: this is a system built to protect controlled information, and the security posture that makes it valuable is the same one that made my preview design impossible.</p>
+
+        <figure>
+          <img src="../images/documents-home-previews.png" alt="The home tab as designed: a grid of recent documents, each shown as a readable preview of its own content, with an Open document action on hover.">
+          <figcaption class="mono">Designed — documents shown by their content.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="../images/documents-home-icons.png" alt="The home tab as shipped: the same grid, but each document reduced to a generic large file-type icon with its title beneath.">
+          <figcaption class="mono">Shipped — generic icons after the security constraint.</figcaption>
+        </figure>
+
+        <p class="callout">The constraint that killed the idea was the reason the product exists.</p>
+      </section>
+
+      <section class="case-section">
+        <h2><span class="rail-index mono">[ 06 ]</span>Validation, and its limits</h2>
+        <p>Designs went in front of real users and stakeholders in sessions several times a week across the year. They reviewed the work, commented on whether it fit how they worked, and the design changed in response. That is continuous validation and it is the reason the work held up.</p>
+        <p>What it was not is usability testing. I never watched anyone use the system. I heard what users said about designs; I did not see what they did with them. Usability testing happened after handoff and I was not part of it.</p>
+        <p>Everything I designed was approved and went into development. I saw parts of it built before moving to another project, and my project manager confirmed the rest was implemented. A second designer joined afterwards for release two, which was new scope rather than a revision of my work.</p>
+      </section>
+
+    </div>
+
+    <!-- 5. Metrics disclosure ---------------------------------------------- -->
+    <details class="metrics">
+      <summary>
+        <span class="metrics__label">What I would have measured</span>
+        <span class="mono metrics__hint"></span>
+      </summary>
+      <div class="metrics__body prose">
+        <p>I did not own this through launch, so these are the metrics I would have pushed for rather than results.</p>
+        <p>The one I would have anchored on already existed: <strong>the volume of support tickets raised to correct document errors.</strong> Users could not fix mistakes themselves, so every error became a ticket, and that cost was already being tracked before I arrived. It is the cleanest before-and-after available.</p>
+        <ul>
+          <li><strong>Restores from the bin and version rollbacks</strong>, as a measure of accidental damage, which only became visible because recovery now existed</li>
+          <li><strong>Time to find a known document</strong>, the thing users would feel most</li>
+          <li><strong>Access-denied events per user</strong>, meaning people attempting things the interface never told them they could not do</li>
+        </ul>
+      </div>
+    </details>
+
+    <!-- 6. Close ------------------------------------------------------------ -->
+    <section class="case-close">
+      <h2><span class="rail-index mono">[ 07 ]</span>What I would do differently</h2>
+      <p><strong>More validation, of a different kind.</strong> I would want to watch people work in the implemented system, particularly around recovery: whether anyone finds version history when they need it, and whether the controlled indicator actually registers before someone acts.</p>
+      <p><strong>Seeing it live.</strong> I designed release one and handed it to development complete, then moved on. I would want to have stayed through implementation, not to protect the design but to learn from it. Watching a system meet real work is where you find out which of your decisions were right for the reasons you thought, and I never got that on this one.</p>
+    </section>
+
+    <!-- 7. Next project ----------------------------------------------------- -->
+    <a class="next-project" href="govtech-platform.html">
+      <span class="next-project__thumb" aria-hidden="true">
+        <img class="next-project__cover" src="../images/govtech-card-cover.png" alt="">
+        <img class="next-project__shot" src="../images/govtech-filter-set.png" alt="">
+      </span>
+      <span class="next-project__body">
+        <span class="mono">Next project</span>
+        <span class="next-project__title">Making a complex system legible</span>
+        <span class="next-project__eyebrow">Market intelligence platform for public sector opportunities</span>
+      </span>
+      <span class="next-project__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/>
+        </svg>
+      </span>
+    </a>
+
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <ul>
+      <li class="mono"><a href="mailto:nikiforovanadyaa@gmail.com">nikiforovanadyaa@gmail.com</a></li>
+      <li class="mono"><a href="https://www.linkedin.com/in/nikiforovanadya" rel="me noopener">LinkedIn</a></li>
+      <li class="mono">Warsaw, Poland</li>
+    </ul>
+  </footer>
+
+</div>
+
+</body>
+</html>
