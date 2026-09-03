@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Making a complex system legible, Nadiia Nikiforova</title>
 <meta name="description" content="Market intelligence platform for public sector opportunities. Advanced search rebuilt as a composable query builder, and a deal timeline redesigned after usability testing.">
 
@@ -91,11 +92,6 @@
         <h2><span class="rail-index mono">[ 02 ]</span>Advanced search, and what was wrong with it</h2>
         <p>Finding opportunities meant filling in a form of field after field laid out in two fixed columns, with further collapsed panels beneath for market offerings, milestones and admin filters. Accordions inside accordions, and filter groups within those — far more than any one screen could hold at once.</p>
         <p>Two problems, and only one of them was cosmetic.</p>
-
-        <figure>
-          <img src="../images/govtech-old-form.png" alt="The legacy advanced search: field after field in two fixed columns, every one the same shape, with And/Or controls on the label line and three collapsed panels beneath for market offerings, milestones and admin filters.">
-          <figcaption class="mono">The form it replaced. Two fixed columns, every field the same shape, And/Or stranded on the label line, and three more panels collapsed beneath.</figcaption>
-        </figure>
         <ul>
           <li><strong>The layout could not adapt to the field.</strong> Every field got the same treatment regardless of what it was. A date, a status and a multi-select taxonomy all sat in the same shaped row, which is why the And/Or operators ended up in places that made no logical sense next to the thing they governed.</li>
           <li><strong>The structure was fixed, so the query was fixed.</strong> The form let you fill in values. It did not let you build a search. If your question needed the same field twice with different operators, or three conditions combined in a particular order, the form had no way to express it.</li>
@@ -153,11 +149,6 @@
         <p>The previous designer built the original timeline and ran usability testing on it with the project manager. Users skipped it, did not notice it, or could not work out what it was showing, even though it sat above the fold. I was brought in to redesign it based on those findings.</p>
         <p>Reading the old version, the reason was structural rather than visual. <strong>The two processes were drawn as two unrelated lists.</strong> Deal meetings ran across the top as numbered cards. Pursuit stages sat below in a loose grid that lined up with nothing. There was no way to see which stage corresponded to which meeting.</p>
         <p class="callout">The system told users the two stages did not align, then gave them a layout in which that misalignment was impossible to see.</p>
-
-        <figure>
-          <img src="../images/govtech-old-timeline.png" alt="The original timeline: deal meetings as eight numbered cards across the top with warning icons on three consecutive cells, and pursuit stages below in a grid that does not line up with them.">
-          <figcaption class="mono">Deal meetings across the top, pursuit stages below, aligned to nothing. Three consecutive cells carry the same warning.</figcaption>
-        </figure>
       </section>
 
       <section class="case-section">

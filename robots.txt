@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /work/healthcare-ai.html
+Disallow: /work/document-management.html
+Disallow: /work/govtech-platform.html
+Disallow: /work/design-system.html
