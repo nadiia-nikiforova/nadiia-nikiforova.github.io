@@ -84,7 +84,7 @@
 
       <section class="case-section">
         <h2><span class="rail-index mono">[ 01 ]</span>The platform</h2>
-        <p>The system tracks government sector opportunities from first interest through to award. Pursuit teams use it to find opportunities worth bidding on, then to manage each deal through a formal sequence of approvals.</p>
+        <p>The system tracks government sector opportunities from first interest through to award. Bid teams use it to find opportunities worth bidding on, then to manage each deal through a formal sequence of approvals.</p>
         <p>Two areas were mine. I joined at the start, moved to another project, and was brought back specifically for the harder problems.</p>
       </section>
 
@@ -145,14 +145,14 @@
 
       <section class="case-section">
         <h2><span class="rail-index mono">[ 05 ]</span>The deal timeline, and why users skipped it</h2>
-        <p>Every opportunity runs two processes at once: a sequence of formal deal meetings, and the pursuit stage the deal has actually reached. Whether those two agree is the thing the team needs to know, because a mismatch means the record is wrong or the process has been skipped.</p>
+        <p>Every opportunity runs two processes at once: a sequence of formal review meetings, and the deal stage the deal has actually reached. Whether those two agree is the thing the team needs to know, because a mismatch means the record is wrong or the process has been skipped.</p>
         <p>The original timeline came out of our design team and was usability tested with the project manager. The testing showed users skipped it, did not notice it, or could not work out what it was showing, even though it sat above the fold. I was brought in to redesign it based on those findings.</p>
-        <p>Reading the old version, the reason was structural rather than visual. <strong>The two processes were drawn as two unrelated lists.</strong> Deal meetings ran across the top as numbered cards. Pursuit stages sat below in a loose grid that lined up with nothing. There was no way to see which stage corresponded to which meeting.</p>
+        <p>Reading the old version, the reason was structural rather than visual. <strong>The two processes were drawn as two unrelated lists.</strong> Review meetings ran across the top as numbered cards. Deal stages sat below in a loose grid that lined up with nothing. There was no way to see which stage corresponded to which meeting.</p>
         <p class="callout">The system told users the two stages did not align, then gave them a layout in which that misalignment was impossible to see.</p>
 
         <figure>
-          <img src="../images/govtech-old-timeline.png" alt="The original timeline: deal meetings as eight numbered cards across the top with warning icons on three consecutive cells, and pursuit stages below in a grid that does not line up with them.">
-          <figcaption class="mono">Deal meetings across the top, pursuit stages below, aligned to nothing. Three consecutive cells carry the same warning.</figcaption>
+          <img src="../images/govtech-old-timeline.png" alt="The original timeline: review meetings as eight numbered cards across the top with warning icons on three consecutive cells, and deal stages below in a grid that does not line up with them.">
+          <figcaption class="mono">Review meetings across the top, deal stages below, aligned to nothing. Three consecutive cells carry the same warning.</figcaption>
         </figure>
       </section>
 
@@ -160,12 +160,12 @@
         <h2><span class="rail-index mono">[ 06 ]</span>Putting both processes on one axis</h2>
 
         <figure>
-          <img src="../images/govtech-timeline-collapsed.png" alt="The redesigned timeline: deal meetings and pursuit stages on one shared horizontal axis, tracks labelled down the left, with stage bars sitting beneath the meeting columns they belong to.">
+          <img src="../images/govtech-timeline-collapsed.png" alt="The redesigned timeline: review meetings and deal stages on one shared horizontal axis, tracks labelled down the left, with stage bars sitting beneath the meeting columns they belong to.">
           <figcaption class="mono">Both tracks on one axis, labelled down the left. Each stage bar sits beneath the meetings it spans, so a mismatch is visible as a mismatch.</figcaption>
         </figure>
 
         <ul>
-          <li><strong>Both processes on one shared horizontal axis</strong>, tracks labelled down the left side. Pursuit stage bars now stretch across and sit beneath the specific deal meeting columns they belong to. The relationship between the two is the layout, so a misalignment shows itself.</li>
+          <li><strong>Both processes on one shared horizontal axis</strong>, tracks labelled down the left side. Deal stage bars now stretch across and sit beneath the specific review meeting columns they belong to. The relationship between the two is the layout, so a misalignment shows itself.</li>
           <li><strong>One warning instead of several.</strong> The old version marked three consecutive cells with warning icons, which spread attention across cells that were not the problem. The new one marks the single cell that needs attention and tints its whole column, so the eye lands on the right place.</li>
           <li><strong>Expand and collapse.</strong> Collapsed shows current position only. Expanded reveals every possible outcome branch, including the award decision paths. Most people need the first, some need the second, and nobody needs both at once.</li>
           <li><strong>Outcome coded by state.</strong> The award decision card turns green when won, red when lost, grey when abandoned.</li>
