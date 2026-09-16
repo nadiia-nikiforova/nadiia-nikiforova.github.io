@@ -872,12 +872,6 @@ summary:focus-visible,
   text-wrap: pretty;
 }
 
-/* Bracketed section marker, sitting above its heading in the rail */
-.rail-index {
-  display: block;
-  margin-bottom: 12px;
-}
-
 .case-section > h3 {
   font-size: var(--size-body);
   margin-top: 16px;

@@ -83,7 +83,7 @@
     <div class="case-body">
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 01 ]</span>The situation</h2>
+        <h2>The situation</h2>
         <p>A healthcare organisation had one clear complaint: their onboarding approval process was broken. No research, no documentation, no access to their users, no requirements.</p>
         <p>The timeline was fixed and not negotiable.</p>
         <p>They were not starting from nothing. They already had a conversational tool in the approval process, one that suggested next actions and listed who needed to approve. It was not working well, and part of discovery was understanding why, so the replacement did not repeat the same mistakes.</p>
@@ -91,7 +91,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 02 ]</span>Finding the real problem</h2>
+        <h2>Finding the real problem</h2>
         <p>Week one went to research, because nobody had defined the problem.</p>
         <p>Working with two business analysts, I ran it in three layers: onboarding in general, onboarding in healthcare, and the company's current onboarding. Alongside that I built a picture of the organisation itself, its priorities, its systems landscape, and the vendors already in its ecosystem.</p>
         <p>Then we mapped the existing approval workflow: <strong>17 steps and 6 separate HR interactions</strong> between a job offer being sent and the hire being confirmed.</p>
@@ -116,7 +116,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 03 ]</span>Decision 1: which side of the workflow gets the AI</h2>
+        <h2>Decision 1: which side of the workflow gets the AI</h2>
         <p>I scoped AI opportunities in two directions.</p>
         <p><strong>Candidate-facing</strong> would mean document extraction and autofill, proactive warnings about wrong file types and expired certificates, guided form completion. Real value, and it improves the quality of what arrives.</p>
         <p><strong>Generalist-facing</strong> would mean ranking the queue, summarising readiness, flagging anomalies, surfacing what changed since last review.</p>
@@ -124,7 +124,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 04 ]</span>Decision 2: not a chat, and not a dashboard</h2>
+        <h2>Decision 2: not a chat, and not a dashboard</h2>
         <p>The obvious build for a conversational AI brief is a chat window. I did not do that, and this was the decision the whole product hangs on.</p>
         <p>A chat-only interface makes the Generalist ask for everything, including things they can already see faster by looking. That was the failure mode of the tool they already had. A traditional queue view has the opposite problem: it makes them do their own filtering across twenty candidates every morning, which is the work they were trying to escape.</p>
         <p>So the screen is split. <strong>Conversation on the left, the candidate gallery on the right, and the two stay in sync.</strong></p>
@@ -144,7 +144,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 05 ]</span>Decision 3: people do not know what to ask</h2>
+        <h2>Decision 3: people do not know what to ask</h2>
         <p>The blank input is the failure point of every conversational interface. Someone opens it, cannot think of the right question, and goes back to the old tool.</p>
         <p>Three things address that:</p>
         <ul>
@@ -164,7 +164,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 06 ]</span>Building it</h2>
+        <h2>Building it</h2>
         <p>Design and build ran in week two.</p>
         <ul>
           <li><strong>Gemini Deep Research</strong> for the three research layers</li>
@@ -197,7 +197,7 @@
 
     <!-- 6. Outcome and limits ---------------------------------------------- -->
     <section class="case-close">
-      <h2><span class="rail-index mono">[ 07 ]</span>Outcome and limits</h2>
+      <h2>Outcome and limits</h2>
       <p>The work was presented to stakeholders and the feedback was positive.</p>
       <p>What I did not have: access to real users. No interviews, no usability testing. The research was desk research and domain analysis, and every assumption in the flow stays an assumption until a working Generalist tests it.</p>
       <p>What I would do differently: I built the assistant's capabilities from research into what Generalists need. I would now want to hear how they phrase questions unprompted before deciding what it should be able to answer.</p>

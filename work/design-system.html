@@ -86,13 +86,13 @@
     <div class="case-body">
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 01 ]</span>The situation</h2>
+        <h2>The situation</h2>
         <p>The system was mature in components and thin in guidance. Components existed, were built atomically with variants and tokens, and were in use across a dozen products. What was missing was the layer that tells another designer what to do with them.</p>
         <p>Documentation was patchy, guidelines were vague and inconsistent, and the system had no coverage at all for mobile. My design lead asked me to investigate the whole documentation layer and rebuild it. That became the core of my work.</p>
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 02 ]</span>How I decided what to document</h2>
+        <h2>How I decided what to document</h2>
         <p>Before writing guidance for a component, or changing one, I went to the pattern library first.</p>
         <p>The pattern library collected real screenshots and mockups of how components were being used across live projects: how designers were actually building data tables, filters, search, even small components like segmented controls. It showed what people did with the system rather than what the system intended.</p>
         <p class="callout">Guidance written from theory tells designers what should work. Guidance written from observed usage tells them what to do about the situations they are actually in.</p>
@@ -100,7 +100,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 03 ]</span>The hard part was adjudication, not writing</h2>
+        <h2>The hard part was adjudication, not writing</h2>
         <p>For any given component decision I would look at how mature systems handled it: Carbon, Material, Visa's guidelines, Apple's, plus NN/g and similar sources.</p>
         <p>They disagree. That is the whole problem. Three respected systems will give three defensible answers on when a checkbox beats a toggle, or how a component should behave under constraint, and none of them were built for the enterprise context I was writing for.</p>
         <p>So the work was not summarising consensus, because there was no consensus. It was gathering the range of approaches, working out which parts were relevant to our products and our users, and then making a call and owning it. On the harder ones I drew on my design lead's experience, but the structure, the analysis and the decisions were mine.</p>
@@ -117,7 +117,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 04 ]</span>Mobile patterns</h2>
+        <h2>Mobile patterns</h2>
         <p>This was the hardest and most interesting part of the year.</p>
         <p>Every product in the suite was built web-first for desktop users. There were no mobile patterns because there had been no mobile need, and when it arrived, responsive breakpoints were not going to be enough.</p>
         <p class="callout">Complex enterprise components do not survive being narrowed. They need to be rethought.</p>
@@ -125,7 +125,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 05 ]</span>Data tables on a small screen</h2>
+        <h2>Data tables on a small screen</h2>
         <p>A table works because you can compare values across columns. On a phone you cannot show the columns, so the comparison has to happen another way.</p>
 
         <figure class="figure--constrained">
@@ -152,7 +152,7 @@
       </section>
 
       <section class="case-section">
-        <h2><span class="rail-index mono">[ 06 ]</span>AI chat as a documented pattern</h2>
+        <h2>AI chat as a documented pattern</h2>
         <p>As products began adding conversational features, I documented the layout as a system pattern rather than letting each team improvise.</p>
         <p>Full page centred, maximum 640px. On mobile, spacing reduced to 16px, full-screen presentation, and the AI name moved into the header so the avatar could be dropped from every message bubble, which buys back meaningful width on a narrow screen.</p>
 
@@ -171,7 +171,7 @@
 
     <!-- 5. Close ------------------------------------------------------------ -->
     <section class="case-close">
-      <h2><span class="rail-index mono">[ 07 ]</span>What I owned, and what I did not</h2>
+      <h2>What I owned, and what I did not</h2>
       <p>The components themselves were the design lead's work. I did not create components from scratch. I added states and subcomponents, redesigned and improved existing ones, worked on tokens and variables, and removed redundancies.</p>
       <p>What I owned outright was the guidelines layer, mobile patterns, and the day-to-day support and mentoring of designers using the system across teams.</p>
 
