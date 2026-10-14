@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>The layer that makes a design system usable, Nadiia Nikiforova</title>
-<meta name="description" content="Design system steward across an enterprise product suite. The guidelines layer rebuilt end to end, and the suite's first mobile patterns.">
+<title>Looking after a design system 30+ products depend on, Nadiia Nikiforova</title>
+<meta name="description" content="Design system steward for 40 components across 30+ products. Components, tokens and guidelines improved from real use, and the system's first mobile patterns.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +36,7 @@
     <!-- 1. Gradient header ------------------------------------------------ -->
     <div class="case-hero case-hero--system case-hero--art">
       <img class="case-hero__bg" src="../images/designsystem-header-cover.png" alt="Soft grainy gradient in deep green, yellow and blue.">
-      <h1>The layer that makes a design system usable</h1>
+      <h1>Looking after a design system 30+ products depend on</h1>
       <p class="case-hero__summary">Design system steward, enterprise product suite</p>
       <div class="case-hero__shot case-hero__shot--image">
         <img src="../images/designsystem-anatomy.jpg" alt="A component anatomy guideline: input fields with nine numbered callouts and a legend defining each part.">
@@ -50,15 +50,15 @@
     <dl class="decision">
       <div>
         <dt class="mono">Constraint</dt>
-        <dd>Fifty to a hundred components across twelve-plus products, all built web-first for desktop users, suddenly needing mobile.</dd>
+        <dd>40 components used across 30+ products, for new projects and redesigns. The token structure was inflexible, guidance was vague, and there were no mobile patterns.</dd>
       </div>
       <div>
         <dt class="mono">Decision</dt>
-        <dd>Pin the identifier column and let a single comparison column cycle through attributes, rather than shrinking the table.</dd>
+        <dd>Improve the system from how designers actually used it. Start from live projects and the pattern library, then fix components, tokens and guidance where real use shows problems.</dd>
       </div>
       <div>
         <dt class="mono">Trade-off</dt>
-        <dd>You compare one attribute at a time. The whole row is never visible at once.</dd>
+        <dd>The parts teams relied on most got fixed first. Less-used parts of the system waited.</dd>
       </div>
     </dl>
 
@@ -66,7 +66,7 @@
     <dl class="summary">
       <div class="summary__fact">
         <dt class="mono">Role</dt>
-        <dd>Design system steward, second of two. Full ownership when the lead was away.</dd>
+        <dd>Design system steward, second of two. I maintained and evolved the system and made design decisions together with the lead. Full ownership when the lead was away.</dd>
       </div>
       <div class="summary__fact">
         <dt class="mono">Timeframe</dt>
@@ -74,11 +74,11 @@
       </div>
       <div class="summary__fact">
         <dt class="mono">Scale</dt>
-        <dd>50 to 100 components with variants and tokens, used across 12+ products</dd>
+        <dd>40 components, used across 30+ products</dd>
       </div>
       <div class="summary__outcome">
         <dt class="mono">Outcome</dt>
-        <dd>The guidelines layer rebuilt end to end, and the suite's first mobile patterns, including the data table nearly every product depended on.</dd>
+        <dd>Cleaner, more consistent components, usage guidelines for every component and pattern, and the system's first mobile patterns, including the data table nearly every product depended on.</dd>
       </div>
     </dl>
 
@@ -87,12 +87,13 @@
 
       <section class="case-section">
         <h2>The situation</h2>
-        <p>The system was mature in components and thin in guidance. Components existed, were built atomically with variants and tokens, and were in use across a dozen products. What was missing was the layer that tells another designer what to do with them.</p>
-        <p>Documentation was patchy, guidelines were vague and inconsistent, and the system had no coverage at all for mobile. My design lead asked me to investigate the whole documentation layer and rebuild it. That became the core of my work.</p>
+        <p>I joined an existing design system as its second steward. It was a living system, updated all the time. Designers used it across the company's products, for new projects and for redesigns.</p>
+        <p>Several parts needed work when I joined. The token structure was inflexible. Some components were not modular enough, and some were redundant and unused. The system was built for desktop web apps, so it had no mobile patterns at all. The setup also predated newer Figma features like variables and component properties, so it needed updating.</p>
+        <p>Guidance was thin too. Guidelines were vague and inconsistent, and documentation was incomplete. That is the layer that tells another designer what to do with a component. My design lead asked me to investigate the whole documentation layer and rebuild it. That became the core of my work.</p>
       </section>
 
       <section class="case-section">
-        <h2>How I decided what to document</h2>
+        <h2>How I decided what to work on</h2>
         <p>Before writing guidance for a component, or changing one, I went to the pattern library first.</p>
         <p>The pattern library collected real screenshots and mockups of how components were being used across live projects: how designers were actually building data tables, filters, search, even small components like segmented controls. It showed what people did with the system rather than what the system intended.</p>
         <p class="callout">Guidance written from theory tells designers what should work. Guidance written from observed usage tells them what to do about the situations they are actually in.</p>
@@ -103,11 +104,11 @@
         <h2>The hard part was adjudication, not writing</h2>
         <p>For any given component decision I would look at how mature systems handled it: Carbon, Material, Visa's guidelines, Apple's, plus NN/g and similar sources.</p>
         <p>They disagree. That is the whole problem. Three respected systems will give three defensible answers on when a checkbox beats a toggle, or how a component should behave under constraint, and none of them were built for the enterprise context I was writing for.</p>
-        <p>So the work was not summarising consensus, because there was no consensus. It was gathering the range of approaches, working out which parts were relevant to our products and our users, and then making a call and owning it. On the harder ones I drew on my design lead's experience, but the structure, the analysis and the decisions were mine.</p>
+        <p>So the work was not summarising consensus, because there was no consensus. It was gathering the range of approaches, working out which parts were relevant to our products and our users, and then making a call and owning it. Making a clear call meant some designers had to change how they were building. On the harder ones I drew on my design lead's experience, but the structure, the analysis and the decisions were mine.</p>
 
         <figure>
           <img src="../images/designsystem-checkbox-guideline.jpg" alt="A checkbox guideline: a When to use table pairing situations with examples, and a When not to use table naming a better alternative for each case, including a toggle switch.">
-          <figcaption class="mono">The output of one call: when a checkbox is right, and when something else — a toggle, a radio group, a multi-select — is the better answer. The decision, made and named.</figcaption>
+          <figcaption class="mono">The output of one call: when a checkbox is right, and when something else is the better answer, such as a toggle, a radio group or a multi-select. The decision, made and named.</figcaption>
         </figure>
 
         <figure>
@@ -144,7 +145,7 @@
 
         <figure>
           <img src="../images/designsystem-cell-interaction.jpg" alt="A cell-interaction guideline with two phone mockups: single tap highlights a cell and shows the edit indicator; double tap opens editing with the keyboard raised.">
-          <figcaption class="mono">Cell editing, spelled out: single tap to focus, double tap to edit — deliberate intent on a screen where a stray tap is easy.</figcaption>
+          <figcaption class="mono">Cell editing, spelled out: single tap to focus, double tap to edit. Editing needs deliberate intent on a screen where a stray tap is easy.</figcaption>
         </figure>
 
         <h3>Getting there</h3>
@@ -163,7 +164,7 @@
 
         <figure>
           <img src="../images/designsystem-aichat-mobile.jpg" alt="The AI chat layout guideline, mobile: a full-screen conversation with 16px spacing annotated, the assistant's name in the header, and no avatar beside the message bubbles.">
-          <figcaption class="mono">Mobile: full-screen, spacing tightened to 16px, and the avatar dropped — the name moves to the header to buy back width.</figcaption>
+          <figcaption class="mono">Mobile: full-screen, spacing tightened to 16px, and the avatar dropped. The name moves to the header to buy back width.</figcaption>
         </figure>
       </section>
 
@@ -171,9 +172,15 @@
 
     <!-- 5. Close ------------------------------------------------------------ -->
     <section class="case-close">
-      <h2>What I owned, and what I did not</h2>
-      <p>The components themselves were the design lead's work. I did not create components from scratch. I added states and subcomponents, redesigned and improved existing ones, worked on tokens and variables, and removed redundancies.</p>
-      <p>What I owned outright was the guidelines layer, mobile patterns, and the day-to-day support and mentoring of designers using the system across teams.</p>
+      <h2>What I owned</h2>
+      <p>I audited the system and live projects to find redundancies and inconsistencies. From there I rebuilt and standardised components using current Figma features, added states and subcomponents, and worked on tokens and variables. Designers got components that were cleaner and more consistent.</p>
+      <p>I improved the documentation and wrote usage guidelines for all components and patterns, so designers had guidance they could actually use. I also introduced the system's first mobile patterns.</p>
+      <p>Day to day, I mentored designers who were new to the system. I was their go-to person for questions and problems.</p>
+
+      <blockquote class="quote">
+        <p>She's the definition of underpromise, overdeliver. Give her a task, and she comes back faster than expected with better results than asked for.</p>
+        <footer class="mono">Design Lead</footer>
+      </blockquote>
 
       <blockquote class="quote">
         <p>Nadia is getting the most possible out of the design system. At times she moves beyond what exists in other systems and creates something of her own using the available components. This is exactly the kind of outcome I expect from other designers: to treat the design system as a kind of construction kit.</p>
