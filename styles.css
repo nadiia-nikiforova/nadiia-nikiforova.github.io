@@ -34,7 +34,6 @@
   /* Type */
   --font-display: "General Sans", "Geist", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 
   /* Seven steps, and nothing outside them. Hierarchy comes from colour and
      space, not from inventing another size. */
@@ -147,7 +146,7 @@ summary:focus-visible,
    -------------------------------------------------------------------------- */
 
 .mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--size-mono);
   font-weight: 400;
   line-height: 1.5;
@@ -164,7 +163,7 @@ summary:focus-visible,
   color: var(--paper);
   padding: 12px 20px;
   border-radius: var(--radius-pill);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--size-mono);
   text-transform: uppercase;
   letter-spacing: var(--track-mono);
@@ -924,6 +923,13 @@ summary:focus-visible,
 }
 
 .case-section > figure figcaption { margin-top: 14px; }
+
+/* Captions are full sentences: sentence case reads better than uppercase */
+figcaption.mono {
+  font-size: var(--size-small);
+  text-transform: none;
+  letter-spacing: normal;
+}
 
 /* A small artefact — a dialog, a tooltip — should sit at its own size rather
    than being blown up to the full figure width. Capped and left-aligned to
