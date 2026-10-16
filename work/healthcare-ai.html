@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Two weeks to a working answer, Nadiia Nikiforova</title>
-<meta name="description" content="AI decision support for clinical hiring approvals. Sole designer, two weeks, from zero.">
+<meta name="description" content="AI support for hiring approvals in healthcare. Sole designer, 2 weeks, starting from zero.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,7 @@
     <div class="case-hero case-hero--healthcare case-hero--art">
       <img class="case-hero__bg" src="../images/healthcare-header-cover.png" alt="Soft grainy gradient in pink, lilac and blue.">
       <h1>Two weeks to a working answer</h1>
-      <p class="case-hero__summary">AI decision support for clinical hiring approvals, healthcare</p>
+      <p class="case-hero__summary">AI support for hiring approvals in healthcare</p>
       <div class="case-hero__shot case-hero__shot--image">
         <img src="../images/healthcare-split-screen.png" alt="The split screen: the assistant's conversation on the left, the candidate's full record with checks and documents on the right.">
       </div>
@@ -47,15 +47,15 @@
     <dl class="decision">
       <div>
         <dt class="mono">Constraint</dt>
-        <dd>Two weeks, no brief, no access to users, an unfamiliar domain, and an existing conversational tool people had already stopped using.</dd>
+        <dd>Two weeks, no brief, no access to users, a domain I had never worked in, and an existing chat tool people had mostly stopped using.</dd>
       </div>
       <div>
         <dt class="mono">Decision</dt>
-        <dd>Split the screen. Conversation and candidate gallery side by side, synced in both directions, rather than chat alone.</dd>
+        <dd>Split the screen: the conversation on one side and the candidates on the other, kept in sync both ways.</dd>
       </div>
       <div>
         <dt class="mono">Trade-off</dt>
-        <dd>Keeping the full candidate card permanently available is an admission the assistant might not be enough. It costs width and creates two paths to the same information.</dd>
+        <dd>Keeping the full candidate card always on screen admits the assistant might not be enough on its own. It takes up space and gives people two ways to reach the same information.</dd>
       </div>
     </dl>
 
@@ -63,19 +63,19 @@
     <dl class="summary">
       <div class="summary__fact">
         <dt class="mono">Role</dt>
-        <dd>Sole designer, with 2 business analysts</dd>
+        <dd>Sole designer, working with 2 business analysts</dd>
       </div>
       <div class="summary__fact">
         <dt class="mono">Timeframe</dt>
-        <dd>2 weeks, from zero</dd>
+        <dd>2 weeks, starting from zero</dd>
       </div>
       <div class="summary__fact">
         <dt class="mono">Context</dt>
-        <dd>Onboarding approvals for a healthcare client</dd>
+        <dd>Hiring process for a healthcare organisation</dd>
       </div>
       <div class="summary__outcome">
         <dt class="mono">Outcome</dt>
-        <dd>Working AI-assisted approval product. 17 steps and 6 HR interactions reduced to 4 and 1. Positive stakeholder response.</dd>
+        <dd>A working, clickable AI approval tool. 17 steps with 6 HR touchpoints became 4 steps with 1. Stakeholders responded well.</dd>
       </div>
     </dl>
 
@@ -84,95 +84,93 @@
 
       <section class="case-section">
         <h2>The situation</h2>
-        <p>A healthcare organisation had one clear complaint: their onboarding approval process was broken. No research, no documentation, no access to their users, no requirements.</p>
-        <p>The timeline was fixed and not negotiable.</p>
-        <p>They were not starting from nothing. They already had a conversational tool in the approval process, one that suggested next actions and listed who needed to approve. It was not working well, and part of discovery was understanding why, so the replacement did not repeat the same mistakes.</p>
-        <p>I was the only designer on it. I had never worked in healthcare.</p>
+        <p>A healthcare organisation told us their hiring process was broken, but they didn't know why. It turned out the process took too long and candidates were dropping out halfway through. There was no research, no documentation, no requirements and no access to the people doing the work, and the deadline was fixed. I was the only designer, and I had never worked in healthcare before.</p>
       </section>
 
       <section class="case-section">
         <h2>Finding the real problem</h2>
-        <p>Week one went to research, because nobody had defined the problem.</p>
-        <p>Working with two business analysts, I ran it in three layers: onboarding in general, onboarding in healthcare, and the company's current onboarding. Alongside that I built a picture of the organisation itself, its priorities, its systems landscape, and the vendors already in its ecosystem.</p>
-        <p>Then we mapped the existing approval workflow: <strong>17 steps and 6 separate HR interactions</strong> between a job offer being sent and the hire being confirmed.</p>
+        <p>Since nobody had defined the problem, I spent the first week on research.</p>
+        <p>With two business analysts, I looked at it on three levels: how onboarding works in general, how it works in healthcare, and how it worked at this company. I also looked at the organisation itself: what it cared about, which systems it used and which vendors it already worked with.</p>
+        <p>Then we mapped how approvals actually happened. Between sending a job offer and confirming the hire there were 17 steps, and 6 of them needed HR.</p>
 
         <figure>
           <img src="../images/healthcare-workflow-map.png" alt="Before and after the redesign. Above, seventeen steps in a single chain with six marked as HR interactions. Below, four steps with one HR interaction, and a loop returning a candidate to the queue.">
-          <figcaption class="mono">Above, the existing flow: seventeen steps, six of them needing HR. Below, what replaced it: four steps and one.</figcaption>
+          <figcaption class="mono">Top: the old flow, 17 steps, 6 of them with HR. Bottom: the new one, 4 steps and 1.</figcaption>
         </figure>
 
-        <p>The step count was not the real finding. The real finding was that the HR Generalist, who makes the final call, was being handed decisions they had no way to make well. Assembling a readiness picture for one candidate meant working across four things at once: the applicant tracking system, a third-party portal, the health clearance system and an email thread. The three of us ran the research together and identified nine distinct failures. The second week was mine: I worked out which of those failures were design problems, what the interface had to do about them, and made every decision that followed. The ones that shaped the product:</p>
+        <p>The number of steps was only part of the story. The bigger finding was about the HR Generalist, the person who makes the final call on each hire. To decide on one candidate, they had to collect information from four places: the applicant tracking system, a third-party portal, the health clearance system and an email thread. Most of the time they were deciding without the full picture.</p>
+        <p>Together the three of us found nine separate problems. In the second week I worked out which of them design could solve and what the interface needed to do about each one, and I made the design decisions from there. These problems shaped the product most:</p>
         <ul>
-          <li><strong>The queue had no urgency signal.</strong> A nurse starting in three days sat next to one starting next month. Generalists worked the list in order, so the most time-sensitive candidates waited longest. That is a structural guarantee, not bad luck.</li>
-          <li><strong>"Cleared with conditions" flattened everything into one list.</strong> A TB result still pending, which does not stop anyone starting, looked exactly like a blocker that does. The Generalist could not tell who was safe to approve and who had to wait.</li>
-          <li><strong>Status existed, timelines did not.</strong> Generalists could see what was pending but not when it would be done, so they could not tell whether a candidate would clear before their start date until it was already too late.</li>
-          <li><strong>Sources disagreed silently.</strong> Candidate data arrived from four separate systems, each on its own update schedule. When two systems held different values, the interface showed one, with no indication that a conflict existed.</li>
-          <li><strong>Nothing was logged.</strong> When a start date failed, there was no timestamped record of who did what and when. The Generalist absorbed the accountability without holding the context to explain it.</li>
-          <li><strong>The existing chat was being abandoned.</strong> Reviewing twenty candidates in a morning, Generalists did not have time for a multi-message thread per person. Going straight to the source systems was faster, so they went back to working manually across tabs and used the chat only for things they could not avoid.</li>
-          <li><strong>Rework had no memory.</strong> A candidate sent back for a fix returned as a fresh review. The Generalist re-read the whole file to work out what had changed, sometimes asking about something already resolved.</li>
+          <li><strong>Nothing showed what was urgent.</strong> A nurse starting in three days sat in the same list as one starting next month. Generalists worked from the top down, so the most urgent candidates often waited the longest.</li>
+          <li><strong>Small issues looked the same as blockers.</strong> "Cleared with conditions" put everything in one bucket. A pending TB result, which doesn't stop someone from starting, looked exactly like an issue that does. Generalists couldn't tell who was safe to approve.</li>
+          <li><strong>They could see status, but not timing.</strong> Generalists knew what was still pending but not when it would be done. They often found out a candidate wouldn't clear in time when it was already too late.</li>
+          <li><strong>Systems disagreed without saying so.</strong> Data came from four systems, each updating on its own schedule. When two of them had different values, the interface showed one and gave no hint there was a conflict.</li>
+          <li><strong>No record of who did what.</strong> When a start date fell through, there was no log of who did what and when. The Generalist took the blame without the information to explain what happened.</li>
+          <li><strong>The existing chat tool was too slow.</strong> The company already had a chat tool that suggested next steps and listed who still needed to approve. But with twenty candidates to review in a morning, nobody had time for a back-and-forth about each one. Opening the source systems was faster, so people went back to switching between tabs.</li>
+          <li><strong>Returned candidates started from scratch.</strong> When a candidate came back after fixing something, the Generalist had to read the whole file again to find what had changed, and sometimes asked about things that were already sorted.</li>
         </ul>
 
-        <p class="callout">The problem I designed against: <strong>give the Generalist everything required to decide, at the moment of deciding, and make the exceptions visible instead of buried.</strong></p>
+        <p class="callout">This gave me a clear goal. <strong>When the Generalist needs to decide, everything they need should be in one place, and anything unusual should stand out.</strong></p>
       </section>
 
       <section class="case-section">
-        <h2>Decision 1: which side of the workflow gets the AI</h2>
-        <p>I scoped AI opportunities in two directions.</p>
-        <p><strong>Candidate-facing</strong> would mean document extraction and autofill, proactive warnings about wrong file types and expired certificates, guided form completion. Real value, and it improves the quality of what arrives.</p>
-        <p><strong>Generalist-facing</strong> would mean ranking the queue, summarising readiness, flagging anomalies, surfacing what changed since last review.</p>
-        <p>I went with Generalist-facing. Better candidate submissions improve the inputs, but the delay was not in the inputs. It was at the decision point, where one person had to assemble a picture from four systems before they could act. Fixing submission quality would have made a broken decision faster to feed, not easier to make.</p>
+        <h2>Decision 1: Who the AI should help</h2>
+        <p>AI could help in two places.</p>
+        <p>On the candidate side, it could read documents and fill in forms automatically, warn people about wrong file types or expired certificates, and guide them through the forms. That would improve what came in.</p>
+        <p>On the Generalist side, it could sort the queue by urgency, summarise how ready each candidate was, flag anything unusual and show what had changed since the last review.</p>
+        <p>I chose the Generalist side. Better submissions would help, but that wasn't where the process got stuck. The delay happened at the decision, where one person had to pull information from four systems before they could act. Cleaner submissions would have made the decision just as hard to make.</p>
       </section>
 
       <section class="case-section">
-        <h2>Decision 2: not a chat, and not a dashboard</h2>
-        <p>The obvious build for a conversational AI brief is a chat window. I did not do that, and this was the decision the whole product hangs on.</p>
-        <p>A chat-only interface makes the Generalist ask for everything, including things they can already see faster by looking. That was the failure mode of the tool they already had. A traditional queue view has the opposite problem: it makes them do their own filtering across twenty candidates every morning, which is the work they were trying to escape.</p>
-        <p>So the screen is split. <strong>Conversation on the left, the candidate gallery on the right, and the two stay in sync.</strong></p>
+        <h2>Decision 2: A split screen</h2>
+        <p>For an AI project like this, the obvious thing to build is a chat window. I didn't, and the whole product depends on that choice.</p>
+        <p>A chat-only tool makes the Generalist ask for everything, even things they could see faster just by looking. That's exactly why the existing tool wasn't being used. A classic list view has the opposite problem: people have to filter twenty candidates themselves every morning, which is the work they wanted to get rid of.</p>
+        <p>So I split the screen. The conversation is on the left, the candidates are on the right, and the two stay in sync.</p>
 
         <figure>
           <img src="../images/healthcare-split-screen.png" alt="The split screen: the assistant's conversation on the left, the candidate's full record with checks and documents on the right.">
-          <figcaption class="mono">Conversation on the left, the candidate's full record on the right. Acting in one updates the other.</figcaption>
+          <figcaption class="mono">The conversation on the left, the candidate's full record on the right. An action on one side updates the other.</figcaption>
         </figure>
 
-        <p>Ask "who is most urgent" and the gallery filters in real time to that candidate, with the filter shown as a removable chip. The answer is not just text, it changes what you are looking at. Open a candidate card manually and the conversation follows you: the assistant switches context to that person, and the input shows a visible tag marking who the next question is about.</p>
-        <p>This mattered because of something I wrote down during research:</p>
+        <p>If you ask "Who is most urgent?", the list on the right filters to that candidate straight away, and the filter appears as a chip you can remove. The answer changes what you see, instead of only giving you text to read. It also works the other way: open a candidate's card yourself and the assistant switches to that person, with a tag in the input showing who your next question is about.</p>
+        <p>We kept one rule in mind throughout the project:</p>
 
-        <p class="callout"><strong>If using the AI takes more effort than not using it, it gets abandoned, and that is a design problem, not a training problem.</strong></p>
+        <p class="callout"><strong>If using the AI takes more effort than working without it, people will stop using it. That's a design problem, not a training problem.</strong></p>
 
-        <p>A chat that made people describe what they wanted instead of pointing at it would have failed that test on day one.</p>
-        <p><strong>The trade-off I accepted:</strong> keeping the full candidate card permanently available is an admission that the assistant might not be enough on its own. That costs screen space and creates two paths to the same information. I took it because this is a hiring decision with compliance exposure, and forcing someone to trust a summary they cannot verify is the wrong failure mode. It also gave me a way to measure the problem.</p>
+        <p>A chat that made people type out what they wanted, when they could just click, would have failed on day one.</p>
+        <p>There was a trade-off. Keeping the full candidate card always on screen means admitting the assistant might not be enough by itself. It takes space and gives people two ways to reach the same information. I accepted that because this is a hiring decision with compliance risk, and people shouldn't have to trust a summary they can't check. It also gave me a way to see whether the assistant was doing its job, which I explain in the metrics below.</p>
       </section>
 
       <section class="case-section">
-        <h2>Decision 3: people do not know what to ask</h2>
-        <p>The blank input is the failure point of every conversational interface. Someone opens it, cannot think of the right question, and goes back to the old tool.</p>
-        <p>Three things address that:</p>
+        <h2>Decision 3: Helping people know what to ask</h2>
+        <p>Chat tools often lose people at the empty text field. They open it, can't think of what to type, and go back to the old way.</p>
+        <p>I solved this in three ways:</p>
         <ul>
-          <li><strong>The empty state asks the questions for you.</strong> "Who is 100% ready?", "Who starts sooner?", "Who is most urgent?" These are not decoration, they are the three questions a Generalist actually opens the tool to answer.</li>
-          <li><strong>Every AI response ends with a follow-up.</strong> After showing outstanding items: "Would you like to see the full checklist or contact their recruiter?" The assistant carries the burden of knowing what comes next.</li>
-          <li><strong>Quick actions sit above the input</strong> for the routine queries: show checks, screening results, start date.</li>
+          <li><strong>Suggested questions on the first screen.</strong> "Who is 100% ready?", "Who starts sooner?", "Who is most urgent?" These are the three questions Generalists actually open the tool for.</li>
+          <li><strong>Every answer suggests a next step.</strong> After listing what's still missing, the assistant asks: "Would you like to see the full checklist or contact their recruiter?" The person doesn't have to figure out what to do next.</li>
+          <li><strong>Quick actions above the input</strong> for routine checks: show checks, screening results, start date.</li>
         </ul>
 
         <figure>
           <img src="../images/healthcare-empty-state.png" alt="The assistant's opening state: three suggested questions across the bottom of the conversation panel, quick actions above the input, and the candidate gallery already populated on the right.">
-          <figcaption class="mono">Three suggested questions instead of a blank prompt, and the gallery already filled, so the first move is a click rather than a sentence.</figcaption>
+          <figcaption class="mono">Three suggested questions instead of an empty field, and the candidate list already filled in, so the first step is a click instead of typing.</figcaption>
         </figure>
 
-        <p>Decisions happen inside the conversation, not in a separate flow: Approve, Request clarification, Withdraw candidate. One action, not a confirmation sequence.</p>
-        <p>Two things sit behind the interface rather than in it. Every action writes to an <strong>audit trail</strong>, logging who acted, when, and against which version of the rules, so a failed start date becomes traceable instead of something the Generalist has to absorb. And a candidate returning after a fix opens with a <strong>delta summary</strong>, three lines covering what changed since last review, each one clickable through to the relevant field, so nobody re-reads a file to find one edit.</p>
-        <p>The rebuilt flow: <strong>4 steps and 1 HR interaction</strong>, from 17 and 6.</p>
+        <p>Generalists make decisions right in the conversation: Approve, Request clarification or Withdraw candidate. It takes one click, with no chain of confirmation screens.</p>
+        <p>Two more things work in the background, and each one solves a problem from the research. Every action is logged with who did it, when, and under which version of the rules. If a start date falls through, you can trace why, and the Generalist doesn't carry the blame alone. And when a candidate comes back after a fix, the assistant opens with a three-line summary of what changed since the last review. Each line links to the field in question, so nobody has to reread the whole file.</p>
+        <p>Together, these decisions brought the flow down to 4 steps and 1 HR touchpoint, from 17 and 6.</p>
       </section>
 
       <section class="case-section">
         <h2>Building it</h2>
-        <p>Design and build ran in week two.</p>
+        <p>Design and build happened in week two. I used:</p>
         <ul>
-          <li><strong>Gemini Deep Research</strong> for the three research layers</li>
-          <li><strong>FigJam</strong> for flows, the issue analysis, and feature prioritisation</li>
+          <li><strong>Gemini Deep Research</strong> for the three levels of research</li>
+          <li><strong>FigJam</strong> for flows, the problem analysis and prioritising features</li>
           <li><strong>v0</strong> for the interactive build</li>
         </ul>
-        <p>I had never used v0 before this project. I learned it during the two weeks, because a static prototype cannot show what a conversational interface feels like.</p>
-        <p>The output was a working, clickable product. Not screens.</p>
+        <p>I hadn't used v0 before. I learned it during those two weeks, because a static prototype can't show how talking to an AI actually feels.</p>
+        <p>The result was a working product you could click through.</p>
       </section>
 
     </div>
@@ -184,13 +182,13 @@
         <span class="mono metrics__hint"></span>
       </summary>
       <div class="metrics__body prose">
-        <p>This did not go to production, so these are the metrics I defined, not results I can report.</p>
-        <p>The trap with an AI feature is measuring engagement. Chat usage going up would have told me nothing. The question was whether decisions got faster and more confident.</p>
+        <p>The product didn't go to production, so these are the metrics I planned, not results.</p>
+        <p>With AI features it's tempting to measure how much people use the chat. That wouldn't have told me much. I wanted to know whether people made decisions faster and felt more confident about them.</p>
         <ul>
-          <li><strong>Time to decision</strong>, from opening a candidate to acting. The primary number.</li>
-          <li><strong>Card-open rate before deciding.</strong> The trust signal. If Generalists kept opening the full card before acting, the assistant was not giving them enough on its own. This is exactly what the split screen was designed to let me observe.</li>
-          <li><strong>Escalation rate.</strong> "Request clarification" and "Contact recruiter" were instrumentation, not menu items. Each use marked a specific information gap, traceable to the candidate that triggered it.</li>
-          <li><strong>Candidates processed per Generalist per day</strong>, as the north star, because it connects to time-to-hire, which is what leadership actually watches.</li>
+          <li><strong>Time to decision,</strong> from opening a candidate to taking action. This is the main number.</li>
+          <li><strong>How often people open the full card before deciding.</strong> This shows trust. If Generalists kept opening it every time, the assistant wasn't giving them enough. The split screen made this visible.</li>
+          <li><strong>How often people ask for help.</strong> Every "Request clarification" or "Contact recruiter" points to a specific missing piece of information for a specific candidate, so these buttons also showed where the gaps were.</li>
+          <li><strong>Candidates processed per Generalist per day.</strong> This is the overall goal, because it connects to time to hire, which leadership actually tracks.</li>
         </ul>
       </div>
     </details>
@@ -198,9 +196,9 @@
     <!-- 6. Outcome and limits ---------------------------------------------- -->
     <section class="case-close">
       <h2>Outcome and limits</h2>
-      <p>The work was presented to stakeholders and the feedback was positive.</p>
-      <p>What I did not have: access to real users. No interviews, no usability testing. The research was desk research and domain analysis, and every assumption in the flow stays an assumption until a working Generalist tests it.</p>
-      <p>What I would do differently: I built the assistant's capabilities from research into what Generalists need. I would now want to hear how they phrase questions unprompted before deciding what it should be able to answer.</p>
+      <p>We presented the work to stakeholders and they responded well.</p>
+      <p>The biggest gap was access to real users. There were no interviews and no usability tests. The research was desk research and domain analysis, so everything in the flow is still an assumption until a real Generalist tries it.</p>
+      <p>If I did it again, I'd first want to hear how Generalists ask questions in their own words before deciding what the assistant should be able to answer.</p>
     </section>
 
     <!-- 7. Next project ----------------------------------------------------- -->
