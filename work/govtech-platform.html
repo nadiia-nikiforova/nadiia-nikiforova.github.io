@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Making a complex system legible, Nadiia Nikiforova</title>
-<meta name="description" content="Market intelligence platform for public sector opportunities. Advanced search rebuilt as a composable query builder, and a deal timeline redesigned after usability testing.">
+<meta name="description" content="Market intelligence platform for public sector opportunities.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,15 +47,15 @@
     <dl class="decision">
       <div>
         <dt class="mono">Constraint</dt>
-        <dd>Dozens of searchable fields, boolean combination, deep taxonomies, in a regulated domain where a wrong result set means a missed bid.</dd>
+        <dd>Dozens of searchable fields, conditions combined with And/Or, categories nested several levels deep, and a regulated domain where a wrong search result means a missed bid.</dd>
       </div>
       <div>
         <dt class="mono">Decision</dt>
-        <dd>Replace the fixed form with composable filter sets, and let each control follow the field type rather than the layout.</dd>
+        <dd>Replace the fixed form with filter sets people can combine themselves, and let each field decide what control it gets.</dd>
       </div>
       <div>
         <dt class="mono">Trade-off</dt>
-        <dd>It is comprehensible, not easy.</dd>
+        <dd>Search still takes some learning, but every part of it is now visible and understandable.</dd>
       </div>
     </dl>
 
@@ -63,19 +63,19 @@
     <dl class="summary">
       <div class="summary__fact">
         <dt class="mono">Role</dt>
-        <dd>Product designer, one of two, each owning separate areas</dd>
+        <dd>Product designer, working with other designers</dd>
       </div>
       <div class="summary__fact">
         <dt class="mono">Timeframe</dt>
-        <dd>Around 6 months, across two stints</dd>
+        <dd>About 2 years, at different stages of the project</dd>
       </div>
       <div class="summary__fact">
         <dt class="mono">Context</dt>
-        <dd>Enterprise platform tracking public sector contract opportunities from first interest through to award</dd>
+        <dd>Enterprise platform that tracks public sector contract opportunities from first interest to award</dd>
       </div>
       <div class="summary__outcome">
         <dt class="mono">Outcome</dt>
-        <dd>Advanced search rebuilt from a fixed form into a composable query builder. Timeline redesigned after usability testing, with strong preference from users.</dd>
+        <dd>Advanced search rebuilt from a fixed form into a flexible query builder. Deal timeline redesigned after usability testing, and users strongly preferred the new version.</dd>
       </div>
     </dl>
 
@@ -84,96 +84,91 @@
 
       <section class="case-section">
         <h2>The platform</h2>
-        <p>The system tracks government sector opportunities from first interest through to award. Bid teams use it to find opportunities worth bidding on, then to manage each deal through a formal sequence of approvals.</p>
-        <p>Two areas were mine. I joined at the start, moved to another project, and was brought back specifically for the harder problems.</p>
+        <p>This platform tracks government contract opportunities from first interest to award. Bid teams use it to find opportunities worth bidding on and to move each deal through a series of approvals. I worked on it for the whole life of the project, from the first dashboard designs to redesigns and new features, and I was often brought in for the more complex parts. We worked closely with real users and met with them several times a week. These are two stories from that work: advanced search and the deal timeline.</p>
       </section>
 
       <section class="case-section">
-        <h2>Advanced search, and what was wrong with it</h2>
-        <p>Finding opportunities meant filling in a form of field after field laid out in two fixed columns, with further collapsed panels beneath for market offerings, milestones and admin filters. Accordions inside accordions, and filter groups within those — far more than any one screen could hold at once.</p>
-        <p>Two problems, and only one of them was cosmetic.</p>
+        <h2>What was wrong with advanced search</h2>
+        <p>To find opportunities, people filled in a long form with fields in two fixed columns, plus collapsed panels with accordions inside accordions. It was far more than one screen could show at once.</p>
+        <p>There were two problems:</p>
         <ul>
-          <li><strong>The layout could not adapt to the field.</strong> Every field got the same treatment regardless of what it was. A date, a status and a multi-select taxonomy all sat in the same shaped row, which is why the And/Or operators ended up in places that made no logical sense next to the thing they governed.</li>
-          <li><strong>The structure was fixed, so the query was fixed.</strong> The form let you fill in values. It did not let you build a search. If your question needed the same field twice with different operators, or three conditions combined in a particular order, the form had no way to express it.</li>
+          <li><strong>Every field looked the same.</strong> A date, a status and a multi-level category list all got the same kind of row, so the And/Or controls often ended up in places that made no sense.</li>
+          <li><strong>The form decided what you could search for.</strong> You could fill in values, but you couldn't build your own search, for example by using the same field twice or combining conditions in a certain way.</li>
         </ul>
-        <p class="callout">Users were working around a tool that could not ask the questions they had.</p>
+        <p>So people were working around a tool that couldn't ask the questions they actually had.</p>
       </section>
 
       <section class="case-section">
-        <h2>Rebuilding it as a query you assemble</h2>
-        <p>I moved it from a form you fill in to a query you assemble.</p>
+        <h2>Rebuilding search as something you build</h2>
+        <p>I changed it from a form you fill in to a search you build yourself.</p>
 
         <figure>
           <img src="../images/govtech-filter-groups.png" alt="The advanced search screen: a logic statement box, keyword search, and eight collapsed filter group cards, each previewing the fields it contains.">
-          <figcaption class="mono">Eight groups, collapsed. Each previews the fields inside it, so the whole search space is visible before anything opens.</figcaption>
+          <figcaption class="mono">Eight groups, collapsed. Each one shows which fields are inside, so you can see the whole search before opening anything.</figcaption>
         </figure>
 
         <ul>
-          <li><strong>Filter groups as entry points.</strong> Eight cards, each naming a group and previewing which fields sit inside it. You see the shape of the entire search space before opening anything, and you only expand what you need. Nested accordions replaced with one level of deliberate disclosure.</li>
-          <li><strong>Filter sets inside each group.</strong> A set is a field, its operator, and its values. Add as many as the question needs, combine them with And or Or. Groups hold sets across different fields, so one General information group can carry a sector taxonomy, a date condition and a tracking status together.</li>
-          <li><strong>Controls driven by the field, not the layout.</strong> Pick a date and you get a date picker. Pick a status and you get a single select. Pick a taxonomy and you get a multi-select container with its own And/Or, selected chips promoted to the top so your choices never scroll out of view, capped height with a scrollbar, and a name search that expands when the list gets long. Some fields carry no operator at all, and the row simply does not show one.</li>
-          <li><strong>State never hidden.</strong> A persistent bar shows every active filter as a removable chip, grouped by field, with a live count. Sixteen filters applied reads as sixteen visible chips, not as a collapsed panel you have to remember the contents of.</li>
+          <li><strong>Filter groups as starting points.</strong> Eight cards, each showing the fields inside. You see everything you can search by, and you only open what you need. This replaced the nested accordions.</li>
+          <li><strong>Filter sets inside each group.</strong> A filter set is one field, a condition and the values. You add as many as you need and combine them with And or Or.</li>
+          <li><strong>Each field gets the control it needs.</strong> A date gets a date picker, a status gets a dropdown, and a category gets a multi-select with its own And/Or, where your selected values stay at the top so they never scroll out of view.</li>
+          <li><strong>You always see what's applied.</strong> Every active filter appears as a chip you can remove, grouped by field, with a live count.</li>
         </ul>
         <figure>
           <img src="../images/govtech-query-builder.png" alt="The query builder: three filter sets stacked and combined with And. A taxonomy multi-select with chosen values promoted to the top, a date condition, and a status condition, each with the control its field type needs.">
-          <figcaption class="mono">One group, three filter sets. A taxonomy, a date and a status, each with the control its field type needs.</figcaption>
+          <figcaption class="mono">One group with three filter sets: a category, a date and a status, each with the control its field needs.</figcaption>
         </figure>
 
-        <p>Letting the row follow the field is the piece that made it scale. The old form failed at that scale because one layout had to serve every type. Adding fields no longer adds confusion.</p>
+        <p>Letting each field decide its own control is what made this work at scale. The old form broke because one layout had to fit every type of field. Now, adding more fields doesn't make search more confusing.</p>
 
         <figure>
           <img src="../images/govtech-applied-state.png" alt="The applied state: the logic statement box rendering the assembled search as a readable sentence, and a Selected filters bar showing fourteen removable chips grouped by field.">
-          <figcaption class="mono">Fourteen filters applied, every one visible as a removable chip, grouped by field, with a live count.</figcaption>
+          <figcaption class="mono">Fourteen filters applied, each one visible as a chip you can remove, grouped by field, with a live count.</figcaption>
         </figure>
-        <h3>What it did not do</h3>
-        <p>I will not claim this made advanced search easy. It is a regulated domain with dozens of fields, boolean combination, and taxonomies several levels deep. That complexity is real and no interface removes it.</p>
-        <p>What the redesign did was make the complexity legible and progressive: visible in structure, revealed on demand, verifiable before you commit. A first-time user still has to learn what a filter set is. The difference is that the interface now teaches them, rather than hiding the concept behind an accordion and hoping.</p>
+        <h3>Making the complexity manageable</h3>
+        <p>The complexity of this domain is real, and no interface can make it disappear. What the redesign does is make it understandable step by step: the structure is visible, details open when you need them, and you can check your search before you run it.</p>
       </section>
 
       <section class="case-section">
         <h2>Natural language search</h2>
-        <p>Adding natural language search was a stakeholder request rather than my idea, and I used an established chat pattern for it: thread, input, follow-ups.</p>
-        <p>One decision in it was mine and mattered. <strong>The assistant writes into the filter panel, not into the results.</strong> Ask a question, and the filters it derives appear in the side panel where you can inspect each chip, remove any of them, and then run or save the search yourself.</p>
-        <p class="callout">Natural language search usually fails by being unverifiable. Routing the output through the structured builder keeps the filters as the source of truth.</p>
+        <p>Stakeholders asked for natural language search, so people could describe what they're looking for in their own words. My key decision was that <strong>the assistant fills in the filters instead of jumping straight to results.</strong> You can check each filter, remove any of them, and then run or save the search yourself.</p>
+        <p class="callout">AI search often fails because people can't check what it did. This way, the AI makes searching faster, and people still see exactly what they're searching for. In a domain where a wrong result means a missed bid, that matters.</p>
 
         <figure>
           <img src="../images/govtech-genai-search.png" alt="The GenAI search tab: a question and answer thread on the left, and a Selected filters panel on the right holding the names the assistant derived, each as a removable chip.">
-          <figcaption class="mono">The answer arrives as filters, not as results. Every chip on the right can be inspected or removed before the search is run.</figcaption>
+          <figcaption class="mono">The answer comes back as filters, not results. You can check or remove each one before running the search.</figcaption>
         </figure>
-        <p>So the AI accelerates the query without becoming a black box in a domain where a wrong result set means a missed bid.</p>
       </section>
 
       <section class="case-section">
         <h2>The deal timeline, and why users skipped it</h2>
-        <p>Every opportunity runs two processes at once: a sequence of formal review meetings, and the deal stage the deal has actually reached. Whether those two agree is the thing the team needs to know, because a mismatch means the record is wrong or the process has been skipped.</p>
-        <p>The original timeline came out of our design team and was usability tested with the project manager. The testing showed users skipped it, did not notice it, or could not work out what it was showing, even though it sat above the fold. I was brought in to redesign it based on those findings.</p>
-        <p>Reading the old version, the reason was structural rather than visual. <strong>The two processes were drawn as two unrelated lists.</strong> Review meetings ran across the top as numbered cards. Deal stages sat below in a loose grid that lined up with nothing. There was no way to see which stage corresponded to which meeting.</p>
-        <p class="callout">The system told users the two stages did not align, then gave them a layout in which that misalignment was impossible to see.</p>
+        <p>Every opportunity runs two processes at the same time: a series of formal review meetings, and the stage the deal has actually reached. The team needs to know whether the two match, because a mismatch means the record is wrong or someone skipped a step.</p>
+        <p>Usability testing showed that users skipped the original timeline, didn't notice it, or couldn't understand it, even though it was at the top of the page. I was brought in to redesign it.</p>
+        <p>The problem was the structure. <strong>The two processes were shown as two separate lists</strong>, and they didn't line up, so there was no way to see which stage belonged to which meeting. The system warned users about a mismatch, but the layout made it impossible to see.</p>
 
         <figure>
           <img src="../images/govtech-old-timeline.png" alt="The original timeline: review meetings as eight numbered cards across the top with warning icons on three consecutive cells, and deal stages below in a grid that does not line up with them.">
-          <figcaption class="mono">Review meetings across the top, deal stages below, aligned to nothing. Three consecutive cells carry the same warning.</figcaption>
+          <figcaption class="mono">Review meetings across the top, deal stages below, lined up with nothing. Three cells in a row show the same warning.</figcaption>
         </figure>
       </section>
 
       <section class="case-section">
-        <h2>Putting both processes on one axis</h2>
+        <h2>Putting both processes on one line</h2>
 
         <figure>
           <img src="../images/govtech-timeline-collapsed.png" alt="The redesigned timeline: review meetings and deal stages on one shared horizontal axis, tracks labelled down the left, with stage bars sitting beneath the meeting columns they belong to.">
-          <figcaption class="mono">Both tracks on one axis, labelled down the left. Each stage bar sits beneath the meetings it spans, so a mismatch is visible as a mismatch.</figcaption>
+          <figcaption class="mono">Both processes on one line, labelled on the left. Each stage sits under the meetings it belongs to, so a mismatch is easy to spot.</figcaption>
         </figure>
 
         <ul>
-          <li><strong>Both processes on one shared horizontal axis</strong>, tracks labelled down the left side. Deal stage bars now stretch across and sit beneath the specific review meeting columns they belong to. The relationship between the two is the layout, so a misalignment shows itself.</li>
-          <li><strong>One warning instead of several.</strong> The old version marked three consecutive cells with warning icons, which spread attention across cells that were not the problem. The new one marks the single cell that needs attention and tints its whole column, so the eye lands on the right place.</li>
-          <li><strong>Expand and collapse.</strong> Collapsed shows current position only. Expanded reveals every possible outcome branch, including the award decision paths. Most people need the first, some need the second, and nobody needs both at once.</li>
-          <li><strong>Outcome coded by state.</strong> The award decision card turns green when won, red when lost, grey when abandoned.</li>
+          <li><strong>One shared timeline.</strong> Each deal stage now stretches across the review meetings it belongs to, so any mismatch stands out.</li>
+          <li><strong>One warning instead of several.</strong> Only the cell that needs attention is marked, and its whole column is highlighted, so the eye goes straight to it.</li>
+          <li><strong>Expand and collapse.</strong> Collapsed, it shows where the deal is now. Expanded, it shows every possible outcome.</li>
+          <li><strong>Colour shows the outcome.</strong> The award decision turns green when won, red when lost and grey when abandoned.</li>
         </ul>
 
         <figure>
           <img src="../images/govtech-timeline-warning.png" alt="The expanded timeline with a single cell flagged: the Submit decision column is tinted, a recommendation banner explains why, and the won outcome is marked green.">
-          <figcaption class="mono">One cell marked, its column tinted, and a line saying what is wrong. Expanded, every outcome branch is visible, the won one in green.</figcaption>
+          <figcaption class="mono">One cell marked, its column highlighted, and a short message explaining the problem. In the expanded view every outcome is visible, with the won one in green.</figcaption>
         </figure>
       </section>
 
@@ -181,10 +176,9 @@
 
     <!-- 5. Close ------------------------------------------------------------ -->
     <section class="case-close">
-      <h2>Result, limits and attribution</h2>
-      <p>The timeline redesign was shown back to users, who strongly preferred it to the original.</p>
-      <p>Worth stating precisely: that was preference feedback from a review, not a second round of usability testing. Preference is not comprehension, and the honest test would have been whether users could now correctly read a misalignment. I would want that before calling it solved.</p>
-      <p>The advanced search redesign was mine end to end, including the structural concept. The timeline's original structure and concept came from the previous designer; I redesigned it and added features on top of their foundation. A second designer worked on other areas of the platform throughout, and design decisions were discussed as a team with the project manager and design lead.</p>
+      <h2>Result</h2>
+      <p>We showed the new timeline to users, and they strongly preferred it to the original.</p>
+      <p>The advanced search redesign was mine from start to finish, including the core idea. For the timeline, I rebuilt the structure based on the testing findings and added new features on top.</p>
     </section>
 
     <!-- 6. Next project ----------------------------------------------------- -->
