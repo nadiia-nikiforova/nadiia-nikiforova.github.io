@@ -269,6 +269,8 @@ summary:focus-visible,
 .lead-ink { color: var(--ink); }
 
 .hero__facts {
+  font-size: var(--size-small);
+  color: var(--ink-muted);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
