@@ -145,13 +145,12 @@ summary:focus-visible,
    Utility type
    -------------------------------------------------------------------------- */
 
+/* Small labels: plain grey text in normal case. No capitals, no tracking. */
 .mono {
   font-family: var(--font-body);
-  font-size: var(--size-mono);
+  font-size: var(--size-small);
   font-weight: 400;
   line-height: 1.5;
-  text-transform: uppercase;
-  letter-spacing: var(--track-mono);
   color: var(--ink-muted);
 }
 
@@ -164,9 +163,7 @@ summary:focus-visible,
   padding: 12px 20px;
   border-radius: var(--radius-pill);
   font-family: var(--font-body);
-  font-size: var(--size-mono);
-  text-transform: uppercase;
-  letter-spacing: var(--track-mono);
+  font-size: var(--size-small);
   text-decoration: none;
   z-index: 10;
 }
@@ -745,7 +742,7 @@ summary:focus-visible,
   border-bottom: 1px solid var(--rule);
 }
 
-.decision dt { padding-top: 11px; }
+.decision dt { padding-top: 8px; }
 
 .decision dd {
   margin: 0;
