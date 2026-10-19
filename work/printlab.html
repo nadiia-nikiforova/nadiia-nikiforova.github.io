@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>print.lab, Nadiia Nikiforova</title>
-<meta name="description" content="Custom merchandise ordering for teams. A design test assignment owned end to end, from primary research through to key screens.">
+<meta name="description" content="Custom merchandise ordering for teams. Design test assignment.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
     <dl class="decision">
       <div>
         <dt class="mono">Constraint</dt>
-        <dd>A take-home test assignment. No engineering, no existing product, no live users to test against.</dd>
+        <dd>A design test assignment with no existing product. I had to find the problem, define it and design the solution myself.</dd>
       </div>
       <div>
         <dt class="mono">Decision</dt>
@@ -54,7 +54,7 @@
       </div>
       <div>
         <dt class="mono">Trade-off</dt>
-        <dd>Never tested. The research is real; validation of the design is the missing half.</dd>
+        <dd>I left out the design tools individual buyers asked for, like AI design generation and richer customisation, to focus on the people ordering for whole teams.</dd>
       </div>
     </dl>
 
@@ -66,15 +66,15 @@
       </div>
       <div class="summary__fact">
         <dt class="mono">Context</dt>
-        <dd>A company's design test assignment, not client work</dd>
+        <dd>A company's design test assignment</dd>
       </div>
       <div class="summary__fact">
         <dt class="mono">Process</dt>
-        <dd>Task analysis, 4 user interviews, market research, persona and CJM, user flow, wireframes, key screens</dd>
+        <dd>Task analysis, 4 user interviews, market research, persona and customer journey map, user flow, wireframes, key screens</dd>
       </div>
       <div class="summary__outcome">
         <dt class="mono">Outcome</dt>
-        <dd>Passed the take-home; invited to the next round of interviews.</dd>
+        <dd>Passed the test assignment and was invited to the next interview round.</dd>
       </div>
     </dl>
 
@@ -89,36 +89,35 @@
 
       <section class="case-section">
         <h2>The problem</h2>
-        <p>Diana is an HR manager handling merchandise for a large IT company. Ordering team apparel means collecting sizes from more than 250 people over Slack, chasing a vendor on Telegram for updates, and hoping nothing went wrong with a logo file she did not know was the wrong format. Orders take months. The process is chaotic and stressful.</p>
-        <p>Three things make it painful, and they are different kinds of problem:</p>
+        <p>My persona, Diana, is an HR manager at a large IT company. To order team apparel, she collects sizes from more than 250 people over Slack, keeps asking the vendor on Telegram for updates, and hopes nothing is wrong with a logo file she didn't know was in the wrong format. Orders take months. The process is chaotic and stressful.</p>
+        <p>Three things make it painful:</p>
         <ul>
-          <li><strong>Collection.</strong> Getting one piece of information from hundreds of people, one conversation at a time.</li>
-          <li><strong>Uncertainty.</strong> No visibility into cost, timeline or file suitability until it is too late to change anything.</li>
-          <li><strong>Silence.</strong> Once it is with the vendor, the only way to know anything is to ask.</li>
+          <li><strong>Collecting sizes.</strong> Getting one piece of information from hundreds of people, one conversation at a time.</li>
+          <li><strong>Not knowing.</strong> No clear cost, timeline or file check until it's too late to change anything.</li>
+          <li><strong>Silence.</strong> Once the order is with the vendor, the only way to know anything is to ask.</li>
         </ul>
       </section>
 
       <section class="case-section">
         <h2>How I got there</h2>
-        <p><strong>Task analysis</strong> first, to map what ordering merchandise actually involves before assuming where the pain was. Then <strong>four user interviews</strong> — a freelance designer running a client's 70-person order, an IT team lead ordering for a team of 30, and two smaller B2C buyers — and <strong>market research</strong> across existing print and merchandise services.</p>
-
-        <p>The pains ranked cleanly, and the top of the list was not what a print service usually optimises for. The dominant complaint was <strong>communication — slow, fragmented, no single source of truth</strong>: "One person writes in Telegram, another verbally, a third sends a PDF." Close behind came <strong>no visibility into production</strong>, then <strong>file preparation that failed late and expensively</strong>. Opaque pricing, informal approval chains and unclear sizing followed. The flashier complaints — dated design tools, limited customisation — sat at the bottom, and came only from the individual buyers.</p>
+        <p>I started with a <strong>task analysis</strong> to understand what ordering merchandise actually involves. Then I ran <strong>four user interviews</strong>: a freelance designer handling a 70-person order for a client, an IT team lead ordering for a team of 30, and two people ordering for themselves. I also did <strong>market research</strong> on existing print and merchandise services.</p>
+        <p>When I ranked the pains, the biggest one surprised me. It wasn't design tools. It was <strong>communication: slow, scattered, with no single place for information.</strong> One person put it like this: "One person writes in Telegram, another verbally, a third sends a PDF." Next came <strong>no visibility into production</strong>, and then <strong>file problems that were found late and cost a lot to fix.</strong> Complaints about dated design tools came last, and only from people ordering for themselves.</p>
 
         <figure>
           <img src="../images/printlab-research-pains.png" alt="A research board titled Pain points ranked by frequency and severity: eight pains from Communication is slow and fragmented down to Customization is too limited, each with a frequency and severity rating and supporting interview quotes.">
-          <figcaption class="mono">The top-ranked pains, coded by frequency and severity with the quotes behind each. Communication led; these four shaped the product. The lower-ranked design-tool complaints are noted above.</figcaption>
+          <figcaption class="mono">The top pains, ranked by how often they came up and how serious they were, with the quotes behind each. Communication came first, and these four shaped the product.</figcaption>
         </figure>
 
-        <p class="callout">One root cause ran under almost every complaint: print shops operate like workshops, not products — manual, reactive, relationship-dependent.</p>
+        <p class="callout">Behind almost every complaint was one root cause: print shops work like workshops, not products. Everything is manual, reactive and depends on personal relationships.</p>
 
-        <p>That reframed the brief. The opportunity was not a slicker design tool; it was <strong>replacing the back-and-forth with a structured, transparent, self-service flow that still feels personal</strong>. So I designed for the organiser — the person coordinating an order for a whole team — and <strong>deliberately deferred the B2C features</strong> that only individual buyers had asked for: AI design generation, live colour-accuracy previews, richer customisation. Coordination was the pain; design tooling was not. Deciding what not to build was as much of the work as deciding what to.</p>
+        <p>That changed the brief. The opportunity wasn't a better design tool. It was <strong>replacing the back-and-forth with a clear, self-service flow that still feels personal.</strong> So I designed for the organiser, the person ordering for a whole team, and left out the features only individual buyers asked for. Deciding what not to build was as important as deciding what to build.</p>
 
-        <p>From there: <strong>persona and customer journey map</strong>, <strong>product concept</strong> and feature prioritisation, then <strong>user flow</strong>, <strong>wireframes</strong>, and the key screens designed in high fidelity by hand.</p>
+        <p>From there I made the <strong>persona and customer journey map</strong>, the <strong>product concept</strong> and feature priorities, then the <strong>user flow</strong>, <strong>wireframes</strong> and the key screens in high fidelity.</p>
       </section>
 
       <section class="case-section">
         <h2>The product</h2>
-        <p>Six stages: order setup, design upload and validation, preview and estimate, size collection, review and payment, production tracking. Four parts of it carry the actual argument.</p>
+        <p>The service has six stages: order setup, design upload and check, preview and estimate, size collection, review and payment, and production tracking. Four decisions shape it most.</p>
 
         <figure>
           <img src="../images/printlab-service-overview.png" alt="The six-stage flow shown as a row of pills: Order Setup, Design Upload and Validation, Preview and Estimate, Size Collection, Review and Payment, Production Tracking.">
@@ -126,72 +125,65 @@
         </figure>
 
         <h3>Commitment comes last</h3>
-        <p>The buyer configures the product, enters quantity and delivery, uploads and validates the design file, reviews the preview and sees the full cost and timeline, and only then creates an account.</p>
-        <p class="callout">Every step that helps someone decide happens before any step that asks something of them. Friction goes after value, never before it.</p>
-        <p>There is also a branch for ordering a physical sample at cost price, which loops back to the start of the flow. A screen can show a mockup of a printed garment. It cannot show what the print actually looks like on fabric, and that is the one thing worth spending real time and money to find out before committing to 250 units.</p>
+        <p>The buyer sets up the product, enters quantity and delivery details, uploads the design, checks the preview and sees the full cost and timeline. Only then do they create an account.</p>
+        <p class="callout">Everything that helps someone decide comes before anything that asks something of them.</p>
+        <p>There's also an option to order a physical sample at cost price. A screen can show a mockup, but it can't show how the print really looks on fabric, and that's worth checking before ordering 250 items.</p>
 
         <figure>
-          <img src="../images/printlab-preview-pricing.png" alt="The preview and pricing screen: a garment mockup with the uploaded logo, an order summary, a full price breakdown (per item, items total, shipping, total), an Order a sample link, and Save draft and Continue — account creation still ahead.">
-          <figcaption class="mono">Preview, full cost and timeline, and a sample-order option — all before the account. Pricing is on screen, not requested.</figcaption>
+          <img src="../images/printlab-preview-pricing.png" alt="The preview and pricing screen: a garment mockup with the uploaded logo, an order summary, a full price breakdown (per item, items total, shipping, total), an Order a sample link, and Save draft and Continue. Account creation is still ahead.">
+          <figcaption class="mono">Preview, full cost and timeline, and the option to order a sample, all before creating an account. The price is shown right away, not on request.</figcaption>
         </figure>
 
-        <h3>The file gets checked before you commit</h3>
-        <p>Upload the design and the system validates it immediately. If it fails, the issue is named and the file goes back for a fix and reupload, looping until it passes. Only a valid file moves forward to preview and estimate.</p>
-        <p>The failure in the original story is not that the logo file was wrong. It is that nobody found out until late, after decisions had been made assuming it was fine. Moving validation to the front converts an expensive late failure into a cheap early one.</p>
+        <h3>The file is checked before you commit</h3>
+        <p>When you upload a design, the system checks it straight away. If something's wrong, it tells you exactly what, and you can fix and upload it again. Only a file that passes moves on to the preview.</p>
+        <p>In Diana's story, the real problem wasn't the wrong file format. It was that nobody noticed until late, after other decisions had already been made. Checking the file at the start turns an expensive late problem into a quick early fix.</p>
 
         <figure>
           <img src="../images/printlab-file-check.png" alt="The file validation screen: the uploaded file named, with format, resolution and print-area checks each marked as passed, and a note that the design is ready for print.">
-          <figcaption class="mono">Validation runs on upload. Format, resolution and print area are each checked and named, so a bad file is caught here rather than at the printer.</figcaption>
+          <figcaption class="mono">The file is checked on upload. Format, resolution and print area are each checked and named, so a bad file is caught here instead of at the printer.</figcaption>
         </figure>
       </section>
 
       <section class="case-section">
-        <h2>Sizes are collected by link, not by conversation</h2>
-        <p>Instead of messaging 250 people individually, you send one link. Each person picks their own size. Responses appear on a live dashboard with a running count, and anyone still pending can be assigned manually.</p>
-        <p><strong>The decision that matters here: recipients do not need an account.</strong> They open the link, tap a size, and they are done. Any friction added to the recipient's side gets multiplied by 250 and lands back on the organiser as chasing.</p>
-        <p class="callout">The person with the problem is Diana, but the person the interface has to be effortless for is everyone else.</p>
+        <h2>Sizes are collected with one link</h2>
+        <p>Instead of messaging 250 people, the organiser sends one link. Each person picks their own size. Answers appear on a live dashboard with a running count, and the organiser can add sizes manually for anyone who hasn't answered.</p>
+        <p><strong>The key decision: people don't need an account to answer.</strong> They open the link, tap a size and they're done. Any extra step for them gets multiplied by 250 and comes back to the organiser as more chasing.</p>
+        <p class="callout">Diana is the one with the problem, but the interface has to be effortless for everyone else.</p>
 
         <figure>
           <img src="../images/printlab-choose-size.png" alt="The recipient's screen: a title Choose your size, four large size buttons S, M, L, XL, a size-guide link, and a note that no account is needed and the response goes straight to the organiser.">
-          <figcaption class="mono">What the recipient sees: tap a size, done. No account, no login — the note says so outright. The organiser's running count is in the header shot above.</figcaption>
+          <figcaption class="mono">What each person sees: tap a size and you're done, no account or login needed. The organiser's running count is in the dashboard at the top of the page.</figcaption>
         </figure>
       </section>
 
       <section class="case-section">
         <h2>Production is visible without asking</h2>
-        <p>A tracking timeline shows the current stage, what has happened, and estimated dates for what has not, alongside a delivery estimate. Milestone alerts go out by email as production progresses, so status arrives rather than having to be fetched.</p>
-        <p class="callout">Chasing a vendor on Telegram is not a communication problem, it is a design problem. Status that has to be requested is status the system already holds and chose not to show.</p>
+        <p>A timeline shows the current stage, what's already done and the expected dates for what's next, along with a delivery estimate. Email updates go out at each milestone, so the organiser gets updates without having to ask.</p>
+        <p class="callout">If people have to chase the vendor for updates, that's a design problem. The system already has the status, so it should show it.</p>
 
         <figure>
           <img src="../images/printlab-production-tracking.png" alt="The production tracking screen: a timeline from In production through Quality check, Packed, Shipped and Delivered with dates, the current stage highlighted, and a delivery estimate beside the order summary.">
-          <figcaption class="mono">The timeline the vendor never gave you: current stage, what has happened, and dated estimates for what has not.</figcaption>
+          <figcaption class="mono">The timeline the vendor never gave you: current stage, what's done, and expected dates for what's next.</figcaption>
         </figure>
       </section>
 
       <details class="metrics">
         <summary>
-          <span class="metrics__label">What I would have measured</span>
+          <span class="metrics__label">How I'd measure success</span>
           <span class="mono metrics__hint"></span>
         </summary>
         <div class="metrics__body prose">
-          <p>This never met a real order, so these are the metrics I would have instrumented, not results — one strong test for each of the three problems, and the number a business would actually watch.</p>
-          <p>The north star: <strong>organiser hours spent per order.</strong> Every problem below is a tax on the organiser's time — chasing sizes, second-guessing cost, chasing the vendor. Drive that number down and the platform scales without adding support staff. It is the metric a stakeholder would care about, and the one that ties the rest together.</p>
+          <p>The main metric is <strong>organiser hours spent per order.</strong> Chasing sizes, guessing the cost and chasing the vendor all take the organiser's time. If that number goes down, the platform can grow without adding support staff.</p>
+          <p>There's also one metric for each of the three problems:</p>
           <ul>
-            <li><strong>Collection —</strong> the share of recipients who submit a size without being chased, and the time from sending the link to a full set. Does one link actually replace 250 conversations?</li>
-            <li><strong>Uncertainty —</strong> the share of orders where cost and timeline are seen before the account and payment — a direct test of "commitment comes last" — and how early a bad file is caught, measured as steps remaining before commitment. An expensive late failure should become a cheap early one.</li>
-            <li><strong>Silence —</strong> the share of orders where the organiser never has to contact support or the vendor for a status update. That absence is the cleanest proof that status arrives rather than having to be fetched.</li>
+            <li><strong>Collecting sizes:</strong> how many people submit a size without being chased, and how long it takes to get every size after sending the link.</li>
+            <li><strong>Not knowing:</strong> how many orders see the cost and timeline before creating an account, and how early bad files are caught.</li>
+            <li><strong>Silence:</strong> how many orders finish without the organiser contacting support or the vendor for an update.</li>
           </ul>
         </div>
       </details>
 
     </div>
-
-    <!-- 5. Close ------------------------------------------------------------ -->
-    <section class="case-close">
-      <h2>Limits</h2>
-      <p>This is a concept. No engineering reviewed it for feasibility, no usability testing was run on the final screens, and none of it has met a real order.</p>
-      <p>The research is real: four interviews and market analysis. What is missing is the second half of the loop, where the design goes back to those users and is tested rather than shown.</p>
-    </section>
 
     <!-- 6. Next project ----------------------------------------------------- -->
     <a class="next-project" href="healthcare-ai.html">
@@ -202,7 +194,7 @@
       <span class="next-project__body">
         <span class="mono">Next project</span>
         <span class="next-project__title">Two weeks to a working answer</span>
-        <span class="next-project__eyebrow">AI decision support for clinical hiring approvals</span>
+        <span class="next-project__eyebrow">AI support for hiring approvals in healthcare</span>
       </span>
       <span class="next-project__arrow" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
