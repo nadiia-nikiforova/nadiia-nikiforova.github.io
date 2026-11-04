@@ -1332,10 +1332,12 @@ figcaption.mono {
   }
 
   .about__portrait,
-  .about__prose {
-    grid-column: 1;
-    grid-row: auto;
-  }
+  .about__prose { grid-column: 1; }
+
+  /* The portrait comes first, right under the heading, instead of after all
+     the text. The source keeps prose first, for screen readers. */
+  .about__portrait { grid-row: 1; }
+  .about__prose { grid-row: 2; }
 
   .about__portrait { max-width: 300px; }
 }
@@ -1392,4 +1394,108 @@ figcaption.mono {
 
   .next-project:hover .next-project__shot { transform: rotate(-2.5deg); }
   .next-project:hover .next-project__arrow { transform: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Bonus: the story game
+   A card under the About quote opens the pixel-art game over the page
+   (story-stage.js). Its cover has the pixel hover (pixel-hover.js).
+   -------------------------------------------------------------------------- */
+
+/* With the pixels on, the cover stays put: no lift, just the colour and the
+   shadow. The script adds .card--pixel only where the effect runs, so touch
+   screens and reduced motion keep the live hover, lift included. */
+.card--pixel:hover .cover,
+.card--pixel:focus-within .cover {
+  transform: none;
+}
+
+/* Pixel layer over the cover, larger than it on every side so pixels can fly
+   past the card's edges. Its box is set from the script. It fades with the
+   cover so the two never come apart, and never catches the pointer, so the
+   card link still works. */
+.cover__pixels {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.62;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.card:hover .cover__pixels,
+.card:focus-within .cover__pixels {
+  opacity: 1;
+}
+
+/* Presented like a piece of work: a case card in every way (radius, veil,
+   shadow, title), so the pixel art reads as content in a frame rather than a
+   clash with the page. It sits in the About prose column, under the quote,
+   at the same width as a case card. */
+.about .card--story {
+  grid-column: auto;
+  margin-top: 40px;
+}
+
+/* The game's own shape, 16:9, and its pixels kept hard at any size. */
+.cover--story { aspect-ratio: 16 / 9; }
+.cover--story .cover__img { image-rendering: pixelated; }
+
+/* The stage the game opens on: over the whole page, in the game's own dark,
+   so the game frame sits on it seamlessly. A slim bar on top holds the close
+   button, so it never sits on the game's own controls. */
+.story-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: #0E0C14;
+  animation: story-in var(--dur) var(--ease);
+}
+
+.story-stage__bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px 4px;
+}
+
+.story-stage__game {
+  display: block;
+  flex: 1;
+  width: 100%;
+  border: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+/* Hidden while it loads, so the game's title screen never flashes up. */
+.story-stage__game.is-loading { opacity: 0; }
+
+.story-stage__close {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-pill);
+  background: rgba(14, 12, 20, 0.6);
+  color: #fff;
+  font: inherit;
+  font-size: var(--size-small);
+  cursor: pointer;
+  transition: border-color 180ms var(--ease);
+}
+
+.story-stage__close:hover,
+.story-stage__close:focus-visible { border-color: #fff; }
+
+/* No page scroll behind the stage. */
+html.is-playing { overflow: hidden; }
+
+@keyframes story-in {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-stage { animation: none; }
 }

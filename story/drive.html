@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play my story</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=VT323&display=swap">
+<style>
+  :root { --ink: #17141F; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0E0C14;
+    font-family: Inter, system-ui, sans-serif; }
+  .frame { position: relative; width: min(98vw, 1152px); aspect-ratio: 16 / 9; overflow: hidden; border-radius: 10px;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,.7); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  .ui { position: absolute; inset: 0; pointer-events: none; }
+  .pbtn { pointer-events: auto; cursor: pointer; font: 400 24px/1 VT323, monospace; color: var(--ink);
+    background: #FFF6E6; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 10px 18px; }
+  .pbtn:hover { translate: -1px -1px; box-shadow: 5px 5px 0 var(--ink); }
+  .pbtn:active { translate: 2px 2px; box-shadow: 2px 2px 0 var(--ink); }
+  .ghost { background: rgba(23,20,31,.55); color: #FFF6E6; border-color: #FFF6E6; box-shadow: none; font-size: 21px; padding: 6px 12px; }
+  .title { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(23,20,31,.35); }
+  .title-in { text-align: center; color: #FFF6E6; text-shadow: 3px 3px 0 var(--ink); }
+  .skip { position: absolute; top: 14px; right: 14px; }
+  .topbar { position: absolute; top: 14px; left: 14px; right: var(--skipR, 100px); display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+  .hud { color: #FFF6E6; font: 400 clamp(18px, 2vw, 24px)/1.1 VT323, monospace;
+    background: rgba(23,20,31,.62); border: 2px solid #FFF6E6; padding: 6px 10px; display: none; }
+  .hud b { color: #FFD36B; font-weight: 600; margin-right: 8px; }
+  .bubble { position: absolute; display: none; max-width: 40%; min-width: 180px; background: #FFF6E6; color: var(--ink);
+    border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 10px 14px 12px;
+    font-size: clamp(14px, 1.5vw, 17px); line-height: 1.45; font-weight: 500; }
+  .bubble b { display: block; font: 400 18px/1 VT323, monospace; color: #8A5A3C; margin-bottom: 4px; letter-spacing: .06em; }
+  .bubble::after { content: ""; position: absolute; bottom: -12px; width: 12px; height: 12px; background: #FFF6E6;
+    border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: rotate(45deg); }
+  .bubble::after { left: calc(var(--tail, 50%) - 7px); }
+  .say { position: absolute; display: none; pointer-events: none; max-width: 34%; min-width: 170px; padding: 9px 13px 11px;
+    color: #FFF6E6; background: rgba(20,17,32,.66); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    border: 2px solid rgba(255,246,230,.85); font: 400 clamp(19px, 2.05vw, 23px)/1.12 VT323, monospace; letter-spacing: .01em; }
+  .say b { display: block; font: 400 clamp(16px, 1.6vw, 18px)/1 VT323, monospace; letter-spacing: .1em; margin-bottom: 4px; }
+  .say::after { content: ""; position: absolute; bottom: -9px; left: calc(var(--tail, 50%) - 6px); width: 12px; height: 8px;
+    background: rgba(255,246,230,.85); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+  .catch { position: absolute; inset: 0; display: none; pointer-events: auto; cursor: pointer; }
+  .hint { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); color: #FFF6E6; font: 400 20px VT323, monospace;
+    text-shadow: 2px 2px 0 var(--ink); display: none; }
+  .end { position: absolute; inset: 0; display: none; place-items: start center; padding-top: 11%; }
+  .end-in { text-align: center; color: #FFF6E6; text-shadow: 3px 3px 0 var(--ink); padding: 0 16px; }
+  .end-in h2 { margin: 0 0 8px; font: 400 clamp(32px, 4.6vw, 56px)/1 VT323, monospace; }
+  .end-in p { margin: 0 0 22px; font: 400 clamp(20px, 2.4vw, 28px)/1.2 VT323, monospace; }
+  .end-links { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; text-shadow: none; }
+  a.pbtn { text-decoration: none; display: inline-block; }
+  .end-links .pbtn { font-size: 22px; line-height: 1; padding: 9px 14px; }
+  .pad { position: absolute; bottom: 14px; right: 14px; display: none; gap: 8px; }
+  .pad .pbtn { width: 52px; height: 44px; padding: 0; font-size: 20px; touch-action: none; user-select: none; }
+  .drivehint { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: none; color: #FFF6E6;
+    font: 400 21px VT323, monospace; background: rgba(23,20,31,.62); border: 2px solid #FFF6E6; padding: 5px 12px; }
+  .radiowrap { position: relative; margin-left: auto; }
+  .radio { display: flex; align-items: center; gap: 8px; pointer-events: auto;
+    color: #FFF6E6; font: 400 20px/1 VT323, monospace; background: rgba(23,20,31,.72); border: 2px solid #FFF6E6; padding: 4px 6px; }
+  .radio button { font: 400 20px/1 VT323, monospace; color: #17141F; background: #FFF6E6; border: 0; cursor: pointer; padding: 4px 8px; }
+  .radio .eq { display: inline-flex; gap: 2px; align-items: flex-end; height: 14px; }
+  .radio .eq i { width: 3px; background: #FFD36B; height: 3px; transition: height 120ms; }
+  .toast { position: absolute; top: calc(100% + 8px); right: 0; transform: translateY(-6px); opacity: 0; pointer-events: none; white-space: nowrap;
+    transition: opacity 200ms, transform 200ms; color: #FFF6E6; font: 400 19px/1 VT323, monospace; background: rgba(23,20,31,.72); border: 2px solid #FFF6E6; padding: 5px 10px; }
+  .toast.on { opacity: 1; transform: none; pointer-events: auto; }
+  .toast a { display: block; margin-top: 5px; color: #FFD36B; font-size: 17px; }
+  .frame.meetable { cursor: pointer; }
+  .greet { z-index: 2; pointer-events: auto; cursor: pointer; animation: hey 1.6s ease-in-out infinite; min-width: 0; }
+  @keyframes hey { 50% { translate: 0 -3px; } }
+  .drivehint kbd { font: 400 19px VT323, monospace; background: #FFF6E6; color: #17141F; padding: 1px 6px; margin: 0 2px; }
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+  <canvas id="c" width="384" height="216"></canvas>
+  <div class="ui">
+    <button class="pbtn ghost skip" id="skip">Skip</button>
+    <div class="title" id="title"><div class="title-in"><button class="pbtn" id="play">Play my story</button></div></div>
+    <div class="say greet" id="meet" role="button" tabindex="0"><b id="greetName" style="color:#FF9FB8">CHEF</b><span></span></div>
+    <div class="say" id="bThem"><b></b><span></span></div>
+    <div class="say" id="bMe"><b style="color:#FFD36B">NADIIA</b><span></span></div>
+    <div class="catch" id="catch"></div>
+    <div class="hint" id="hint">Click anywhere to continue</div>
+    <div class="end" id="end"><div class="end-in"><h2>What's next?</h2><p>The next chapter could be with your team.</p>
+      <div class="end-links"><a class="pbtn" href="../index.html#work">See my work</a><a class="pbtn ghost" href="mailto:nikiforovanadyaa@gmail.com">Email me</a>
+      <a class="pbtn ghost" href="https://www.linkedin.com/in/nikiforovanadya" target="_blank" rel="noopener">LinkedIn</a><button class="pbtn ghost" id="again">Ride again</button></div></div></div>
+    <div class="pad" id="pad"><button class="pbtn" id="padL" aria-label="Back">◀</button><button class="pbtn" id="padR" aria-label="Forward">▶</button></div>
+    <div class="topbar">
+    <div class="hud" id="hud"><b id="hudYears">2012-2016</b><span id="hudTitle">Alfred Nobel University · Marketing</span></div>
+    <div class="radiowrap"><div class="radio" id="radio"><button id="rPlay" aria-label="Play music">▶</button><span class="eq" id="eq"><i></i><i></i><i></i><i></i></span><span>Racing Radio</span>
+      <button id="rNext" aria-label="Next song">⏭</button></div>
+    <div class="toast" id="toast" role="status"><span id="tTitle"></span><a id="tLink" target="_blank" rel="noopener">Preview from Apple Music ↗</a></div></div>
+    </div>
+    <div class="drivehint" id="drivehint">Drive with <kbd>←</kbd><kbd>→</kbd></div>
+    <div class="drivehint" id="meethint">Click anywhere to start talking</div>
+  </div>
+</div>
+
+<script>
+(() => {
+const W = 384, H = 216, TILE = 768;
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+const $ = id => document.getElementById(id);
+
+/* ---------- utilities ---------- */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const hex = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+const BAYER = [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5].map(v => (v + .5) / 16);
+const dith = (x, y, f) => f > BAYER[(y & 3) * 4 + (x & 3)];
+function layer(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); const img = g.createImageData(w, h);
+  return { c, g, img, set(x, y, col) { if (x < 0 || y < 0 || x >= w || y >= h) return; const i = (y * w + x) * 4, k = typeof col === 'string' ? hex(col) : col;
+    img.data[i] = k[0]; img.data[i+1] = k[1]; img.data[i+2] = k[2]; img.data[i+3] = 255; }, done() { g.putImageData(img, 0, 0); return c; } }; }
+function periodic(seed, terms) { const r = rng(seed); const t = terms.map(([k, a]) => [k, a, r() * Math.PI * 2]);
+  return x => t.reduce((s, [k, a, p]) => s + a * Math.sin(2 * Math.PI * k * x / TILE + p), 0); }
+function px(g, x, y, w, h, col) { g.fillStyle = col; g.fillRect(Math.round(x), Math.round(y), w, h); }
+
+/* 3x5 pixel font for signs */
+const FONT = { A:'010101111101101',B:'110101110101110',C:'011100100100011',D:'110101101101110',E:'111100110100111',
+  F:'111100110100100',G:'011100101101011',H:'101101111101101',I:'111010010010111',J:'001001001101010',K:'101101110101101',
+  L:'100100100100111',M:'101111111101101',N:'110101101101101',O:'010101101101010',P:'110101110100100',Q:'010101101110011',
+  R:'110101110101101',S:'011100010001110',T:'111010010010010',U:'101101101101111',V:'101101101101010',W:'101101111111101',
+  X:'101101010101101',Y:'101101010010010',Z:'111001010100111','0':'111101101101111','1':'010110010010111','2':'110001010100111',
+  '3':'110001010001110','4':'101101111001001','5':'111100110001110','6':'011100111101111','7':'111001010010010','8':'111101111101111',
+  '9':'111101111001110','-':'000000111000000','·':'000000010000000',' ':'000000000000000' };
+function text(g, s, x, y, col) { g.fillStyle = col; [...s].forEach((ch, i) => { const b = FONT[ch] || FONT[' '];
+  for (let k = 0; k < 15; k++) if (b[k] === '1') g.fillRect(x + i * 4 + k % 3, y + (k / 3 | 0), 1, 1); }); }
+const textW = s => s.length * 4 - 1;
+function text2(g, s, x, y, col) { g.fillStyle = col; [...s].forEach((ch, i) => { const b = FONT[ch] || FONT[' '];
+  for (let k = 0; k < 15; k++) if (b[k] === '1') g.fillRect(x + i * 8 + (k % 3) * 2, y + (k / 3 | 0) * 2, 2, 2); }); }
+function glyph(g, rows, x, y, sc, col) { g.fillStyle = col; rows.forEach((row, j) => [...row].forEach((c, i) => { if (c === '#') g.fillRect(x + i * sc, y + j * sc, sc, sc); })); }
+
+/* ---------- painted layers (generated once) ---------- */
+function paintSky() {
+  const L = layer(W, H);
+  const stops = ['#E9767C', '#F08C86', '#F6A595', '#F9BDA4', '#FBD3B6', '#FCE3C6'];
+  for (let y = 0; y < 150; y++) { const f = y / 150 * (stops.length - 1), i = Math.min(stops.length - 2, f | 0), t = f - i;
+    for (let x = 0; x < W; x++) L.set(x, y, dith(x, y, t) ? stops[i + 1] : stops[i]); }
+  const r = rng(7);
+  for (let s = 0; s < 14; s++) { const y = 18 + (r() * 100 | 0), x0 = r() * W | 0, len = 40 + r() * 140 | 0;
+    for (let x = x0; x < x0 + len; x++) L.set(x % W, y, y < 60 ? '#F4A49C' : '#FDE9D2'); }
+  const sx = 286, sy = 104;                                   // the sun, low over the far range
+  for (let y = -26; y <= 26; y++) for (let x = -26; x <= 26; x++) { const d = Math.hypot(x, y);
+    if (d < 15) L.set(sx + x, sy + y, d < 13 ? '#FFF4D6' : '#FFE7B5');
+    else if (d < 26 && dith(sx + x, sy + y, (26 - d) / 22 * .55)) L.set(sx + x, sy + y, '#FDDDBA'); }
+  return L.done();
+}
+
+function paintClouds(pal = ['#FFFBF6', '#FFEDE7', '#F9CFC8', '#EFB0AE']) {
+  const L = layer(TILE, 120), r = rng(21);
+  const blobs = [];
+  for (let c = 0; c < 9; c++) { const cx = r() * TILE, cy = 18 + r() * 70, n = 5 + (r() * 6 | 0), w = 30 + r() * 60;
+    for (let b = 0; b < n; b++) blobs.push([cx + (r() - .5) * w, cy + (r() - .3) * 10, 7 + r() * 13]); }
+  for (let y = 0; y < 120; y++) for (let x = 0; x < TILE; x++) {
+    let best = 0, top = 0;
+    for (const [bx, by, br] of blobs) { let dx = Math.abs(x - bx); dx = Math.min(dx, TILE - dx);
+      const v = 1 - Math.hypot(dx, (y - by) * 1.5) / br; if (v > best) { best = v; top = (by - y) / br; } }
+    if (best <= 0) continue;
+    const col = top > .35 ? pal[0] : top > -.05 ? pal[1] : top > -.4 ? pal[2] : pal[3];
+    if (best > .05 || dith(x, y, best * 12)) L.set(x, y, col);
+  }
+  return L.done();
+}
+
+function paintRange(seed, base, amp, cols, snowLine) {
+  const L = layer(TILE, H), h = periodic(seed, [[1, amp * .5], [2, amp * .35], [3, amp * .25], [5, amp * .12], [9, amp * .06], [17, amp * .03]]);
+  const n = periodic(seed + 3, [[23, 1], [37, .6], [61, .4]]);
+  for (let x = 0; x < TILE; x++) {
+    const hx = h(x), top = Math.round(base - amp * .9 - hx);
+    const slope = h(x + 5) - h(x - 5), litDepth = Math.max(0, Math.min(28, -slope * 3)) + n(x) * 3;  // broad faces only
+    for (let y = top; y < H; y++) {
+      const d = y - top, depth = (y - top) / (base + 40 - top);
+      let col = d < litDepth ? cols.lit : (slope > 2 && d > 8 ? cols.shade : cols.base);
+      if (base - amp * .9 - hx < snowLine && d < 5 + Math.round(n(x) * 3)) col = litDepth > 6 ? cols.snowLit : cols.snow;
+      const k = hex(col), hz = hex(cols.haze), m = Math.max(0, Math.min(.75, (depth - .45) * 1.4));   // smooth haze, no dots
+      L.set(x, y, k.map((v, i) => Math.round(v + (hz[i] - v) * m)));
+    }
+  }
+  return L.done();
+}
+
+const FOREST_DAY = { g1: '#2F4637', g2: '#3A5440', d1: '#22322B', d2: '#2A3D31', m1: '#33493A', m2: '#3D5841', tip: '#56714E' };
+function paintForest(c = FOREST_DAY) {
+  const L = layer(TILE, H), r = rng(44), trees = [];
+  for (let i = 0; i < 170; i++) trees.push([r() * TILE, 150 + r() * 8, 14 + r() * 22, r()]);
+  trees.sort((a, b) => a[1] - b[1]);
+  for (let y = 152; y < H; y++) for (let x = 0; x < TILE; x++) L.set(x, y, dith(x, y, (y - 152) / 10) ? c.g1 : c.g2);
+  for (const [tx, ty, th, v] of trees) {
+    const dark = v < .5 ? c.d1 : c.d2, mid = v < .5 ? c.m1 : c.m2, tip = c.tip;
+    for (let k = 0; k < th; k++) { const y = Math.round(ty - k), half = Math.max(0, (th - k) * .32 + ((k % 5) < 2 ? 1 : 0));
+      for (let dx = -half; dx <= half; dx++) { const x = Math.round(tx + dx);
+        L.set((x + TILE) % TILE, y, dx > half * .35 ? dark : (dx < -half * .5 && k > th * .3 ? tip : mid)); } }
+  }
+  return L.done();
+}
+
+function paintMeadow(c = ['#5E8C3A', '#7FAA4D', '#F6F0E2', '#B98BDD']) {
+  const L = layer(TILE, H), h = periodic(66, [[2, 4], [5, 2], [11, 1]]), r = rng(5);
+  for (let x = 0; x < TILE; x++) { const top = Math.round(158 - h(x));
+    for (let y = top; y < 170; y++) { const t = (y - top) / 12; L.set(x, y, dith(x, y, t) ? c[0] : c[1]); }
+    if (r() < .18) L.set(x, top + 2 + (r() * 6 | 0), r() < .5 ? c[2] : c[3]); }
+  return L.done();
+}
+
+function paintFore() {
+  const L = layer(TILE, 22), r = rng(91);
+  for (let y = 0; y < 22; y++) for (let x = 0; x < TILE; x++) L.set(x, y, dith(x, y, y / 22) ? '#3F6B2A' : '#4F7F33');
+  for (let i = 0; i < 700; i++) { const x = r() * TILE | 0, y = r() * 20 | 0; L.set(x, y, '#6A9B44'); L.set(x, y - 1, '#6A9B44'); }
+  for (let i = 0; i < 260; i++) { const x = r() * TILE | 0, y = 2 + r() * 18 | 0, c = r() < .55 ? '#F7F1E4' : r() < .6 ? '#A77BD8' : '#FFD66B';
+    L.set(x, y, c); if (r() < .4) L.set(x + 1, y, c); }
+  return L.done();
+}
+
+function paintRoad() {
+  const L = layer(TILE, 34), r = rng(12);
+  for (let y = 0; y < 34; y++) for (let x = 0; x < TILE; x++) {
+    let col;
+    if (y < 5) col = (x % 12 === 0 || y === 4) ? '#9C9387' : (y === 0 ? '#D6CDBF' : '#C3B9AA');        // pavement
+    else if (y < 7) col = y === 5 ? '#6B6470' : '#5A5560';                                               // kerb
+    else if (y < 31) col = r() < .05 ? '#5B5864' : '#4A4752';                                            // tarmac
+    else col = y === 31 ? '#6B6470' : '#3F6B2A';
+    if (y === 16 && (x % 24) < 12) col = '#EDE6D6';                                                       // lane line
+    L.set(x, y, col);
+  }
+  return L.done();
+}
+
+function paintDuskSky() {
+  const L = layer(W, H), stops = ['#272058', '#2C2564', '#322B70', '#38327C', '#3F3B86', '#47448E', '#544C94', '#665296', '#7C5896', '#955F94', '#AE6890', '#C4748C'];
+  for (let y = 0; y < 150; y++) { const f = y / 150 * (stops.length - 1), i = Math.min(stops.length - 2, f | 0), t = f - i;
+    for (let x = 0; x < W; x++) L.set(x, y, dith(x, y, t) ? stops[i + 1] : stops[i]); }
+  const r = rng(31);
+  for (let s = 0; s < 18; s++) L.set(r() * W | 0, r() * 30 | 0, '#B9B2E6');
+  // long thin streaks high up
+  for (const [cx, cy, w, h] of [[80, 20, 190, 4], [270, 13, 240, 5], [330, 32, 120, 3]])
+    for (let j = 0; j < h; j++) { const half = w / 2 * (1 - Math.abs(j - h / 2) / h) * (.8 + r() * .2);
+      for (let x = Math.round(cx - half); x <= cx + half; x++) if (x >= 0 && x < W) L.set(x, cy + j, j < h / 2 ? '#3E2F74' : '#56408A'); }
+  // big puffy clouds, lit from below by the sun that has just gone down behind the range
+  const GX = 238, GY = 100, clusters = [[236, 70, 130, 24, 6, 14], [318, 84, 110, 18, 5, 11], [108, 82, 140, 22, 8, 18], [26, 64, 90, 14, 7, 13], [370, 72, 70, 12, 6, 13], [176, 44, 130, 18, 6, 12]];
+  const warmP = ['#FFE08A', '#FFB56E', '#F27A6E', '#D85E7C', '#9A4A88', '#5B3F8C'], coolP = ['#F7A878', '#E07078', '#B8507E', '#8A4A86', '#5E3F88', '#43337C'];
+  for (const [cx, cy, span, n, r0, r1] of clusters) {
+    const blobs = Array.from({ length: n }, () => { const rr = r0 + r() * (r1 - r0); return [cx + (r() - .5) * span, cy - rr * .3, rr]; });
+    for (let y = cy - 50; y <= cy + 5; y++) for (let x = Math.round(cx - span / 2 - r1); x <= cx + span / 2 + r1; x++) {
+      if (x < 0 || x >= W) continue;
+      let best = 0, top = 0;
+      for (const [bx, by, br] of blobs) { const v = 1 - Math.hypot(x - bx, (y - by) * 1.25) / br; if (v > best) { best = v; top = (by - y) / br; } }
+      if (best <= 0 || y > cy + Math.round(Math.sin(x * .21 + cx) * 2 + Math.sin(x * .07 + cy) * 2)) continue;   // soft, uneven underside
+      const warm = Math.max(0, 1 - Math.hypot(x - GX, (y - GY) * 1.5) / 150), lit = Math.max(0, Math.min(1, .55 - top * 1.1 + (y - cy) / 60));
+      const P = warm > .45 ? warmP : coolP, v = (1 - lit) * (P.length - 1), k = Math.min(P.length - 1, Math.floor(v) + (dith(x, y, v % 1) ? 1 : 0));
+      if (best > .04 || dith(x, y, best * 14)) L.set(x, y, P[k]); }
+  }
+  // thin glowing streaks low on the horizon
+  for (const [cx, cy, w] of [[200, 96, 140], [300, 102, 90], [70, 98, 80]])
+    for (let x = Math.round(cx - w / 2); x <= cx + w / 2; x++) if (x >= 0 && x < W && r() < .9) L.set(x, cy, Math.abs(x - GX) < 70 ? '#FFB56E' : '#D86E86');
+  return L.done();
+}
+
+function paintNightSky() {
+  const L = layer(W, H), stops = ['#0B0B1E', '#10102A', '#161736', '#1D1E44', '#26264F', '#33305A'];
+  for (let y = 0; y < 150; y++) { const f = y / 150 * (stops.length - 1), i = Math.min(stops.length - 2, f | 0), t = f - i;
+    for (let x = 0; x < W; x++) L.set(x, y, dith(x, y, t) ? stops[i + 1] : stops[i]); }
+  const r = rng(41);
+  for (let s = 0; s < 110; s++) L.set(r() * W | 0, r() * 110 | 0, r() < .7 ? '#9C9CC8' : '#FFFFFF');
+  for (let y = -9; y <= 9; y++) for (let x = -9; x <= 9; x++) { const d = Math.hypot(x, y);                 // full moon
+    if (d < 8) L.set(300 + x, 34 + y, d < 7 ? ((x * 7 + y * 3) % 11 === 0 ? '#E6DCC0' : '#FFF4D6') : '#F2E2B8'); }
+  return L.done();
+}
+
+function tinted(src, col, a) { const c = document.createElement('canvas'); c.width = src.width; c.height = src.height;
+  const g = c.getContext('2d'); g.drawImage(src, 0, 0); g.globalCompositeOperation = 'source-atop'; g.globalAlpha = a; g.fillStyle = col;
+  g.fillRect(0, 0, c.width, c.height); return c; }
+
+function paintForeDusk() {
+  const L = layer(TILE, 22), r = rng(93);
+  for (let y = 0; y < 22; y++) for (let x = 0; x < TILE; x++) L.set(x, y, dith(x, y, y / 22) ? '#14261E' : '#1C3326');
+  for (let i = 0; i < 600; i++) { const x = r() * TILE | 0, y = r() * 20 | 0; L.set(x, y, '#2A4A33'); L.set(x, y - 1, '#2A4A33'); L.set(x, y - 2, '#24402C'); }
+  for (let i = 0; i < 70; i++) { const x = r() * TILE | 0, y = 4 + r() * 15 | 0, c = ['#F28DB2', '#FF9F6B', '#A77BE0', '#F7C1D8'][r() * 4 | 0];
+    [[0, -1], [-1, 0], [1, 0], [0, 1]].forEach(([dx, dy]) => L.set(x + dx, y + dy, c)); L.set(x, y, '#FFE08A'); }
+  return L.done();
+}
+
+function grad(L, stops, h = 150) {                                // fills the whole height; below h it holds the last colour
+  for (let y = 0; y < L.c.height; y++) { const f = Math.min(y, h - 1) / h * (stops.length - 1), i = Math.min(stops.length - 2, f | 0), t = f - i;
+    for (let x = 0; x < L.c.width; x++) L.set(x, y, dith(x, y, t) ? stops[i + 1] : stops[i]); }
+}
+
+/* winter at night: snowy ranges, a snowy forest and a field */
+function paintWinterSky() {
+  const L = layer(W, H), r = rng(53);
+  grad(L, ['#0C1230', '#121A40', '#1A2650', '#24325E', '#30406C', '#3E4E7A']);
+  for (let s = 0; s < 120; s++) L.set(r() * W | 0, r() * 110 | 0, r() < .7 ? '#9FB0D8' : '#FFFFFF');
+  for (let y = -7; y <= 7; y++) for (let x = -7; x <= 7; x++) { const d = Math.hypot(x, y); if (d < 8) L.set(300 + x, 34 + y, d < 7 ? '#F2F6FF' : '#D6E0F2'); }   // same place as the night moon
+  return L.done();
+}
+function paintSnowForest() {
+  const L = layer(TILE, H), r = rng(44), trees = [];
+  for (let i = 0; i < 170; i++) trees.push([r() * TILE, 150 + r() * 8, 14 + r() * 22, r()]);
+  trees.sort((a, b) => a[1] - b[1]);
+  for (let y = 152; y < H; y++) for (let x = 0; x < TILE; x++) L.set(x, y, '#9AAAD0');
+  for (const [tx, ty, th, v] of trees) {
+    const dark = v < .5 ? '#16243A' : '#1C2C44', mid = v < .5 ? '#22344E' : '#2A3E58';
+    for (let k = 0; k < th; k++) { const y = Math.round(ty - k), half = Math.max(0, (th - k) * .32 + ((k % 5) < 2 ? 1 : 0));
+      for (let dx = -half; dx <= half; dx++) { const x = (Math.round(tx + dx) + TILE) % TILE;
+        L.set(x, y, k % 5 === 1 && dx < half * .4 ? '#DDE6F5' : dx > half * .35 ? dark : mid); } }
+    L.set(Math.round(tx) % TILE, Math.round(ty - th), '#EEF3FC');
+  }
+  return L.done();
+}
+function paintSnowField() {
+  const L = layer(TILE, H), r = rng(47), h = periodic(48, [[2, 3], [5, 2], [11, 1]]);
+  for (let x = 0; x < TILE; x++) { const top = Math.round(152 - h(x)), sl = h(x + 3) - h(x - 3);
+    for (let y = top; y < H; y++) L.set(x, y, y < top + 1 ? '#F2F6FF' : sl > .6 && y < top + 6 ? '#AFC0E0' : dith(x, y, (y - top) / 24) ? '#C9D6EE' : '#DDE6F5'); }
+  return L.done();
+}
+function paintForeSnow() {
+  const L = layer(TILE, 22), r = rng(96);
+  for (let y = 0; y < 22; y++) for (let x = 0; x < TILE; x++) L.set(x, y, dith(x, y, y / 22) ? '#C9D6EE' : '#E6EEFA');
+  for (let i = 0; i < 200; i++) L.set(r() * TILE | 0, r() * 22 | 0, '#FFFFFF');
+  return L.done();
+}
+
+/* downtown at night: smog, megatowers, neon ads, rain */
+function paintEntSky() {
+  const L = layer(W, H), r = rng(57);
+  grad(L, ['#070818', '#0A0C22', '#0E102C', '#121434', '#18183C', '#201C46', '#2A204E', '#362454', '#442858', '#522C5A'], 160);
+  for (let b = 0; b < 3; b++) { const x0 = 40 + b * 130, ang = (b - 1) * .35;                              // searchlights in the smog
+    for (let y = 0; y < 150; y++) { const cx = x0 + (150 - y) * ang, half = 1 + (150 - y) * .06;
+      for (let x = -half; x <= half; x++) if (dith(cx + x | 0, y, .14)) L.set(cx + x | 0, y, '#2A3060'); } }
+  return L.done();
+}
+const NEON = ['#FF6FA8', '#9B6BFF', '#5A8CFF'];
+function paintMegaCity(seed, kind) {
+  const L = layer(TILE, H), r = rng(seed), set = (x, y, c) => { if (y >= 0 && y < H) L.set(((x % TILE) + TILE) % TILE, y, c); };
+  const far = kind === 'far', bottom = BASE + 2;
+  for (let x = 0; x < TILE;) {
+    const bw = far ? 22 + (r() * 30 | 0) : 20 + (r() * 26 | 0), top = far ? 36 + (r() * 70 | 0) : kind === 'mid' ? 50 + (r() * 64 | 0) : 112 + (r() * 22 | 0);
+    const body = far ? ['#121630', '#141838'][r() * 2 | 0] : kind === 'mid' ? ['#10142C', '#131834', '#0E1228'][r() * 3 | 0] : '#0C0F22';
+    for (let xx = x; xx < x + bw; xx++) for (let y = top; y < bottom; y++) {
+      let c = body;
+      if (xx === x) c = far ? '#1E2448' : '#22285A';
+      if (y % (far ? 4 : 5) === 1 && (xx - x) % 3 === 1 && r() < (far ? .07 : .1)) c = r() < .6 ? '#5A6CC8' : '#B07AD8';            // quiet windows
+      set(xx, y, c); }
+    if (far && r() < .3) { for (let k = 0; k < 12; k++) set(x + (bw >> 1), top - k, '#1E2448'); set(x + (bw >> 1), top - 12, '#FF6FA8'); }
+    if (kind === 'mid') {
+      const crown = r(), nc0 = NEON[r() * 3 | 0];
+      if (crown < .35) { const cw = Math.round(bw * .6), cx0 = x + ((bw - cw) >> 1);                         // a stepped crown
+        for (let xx = cx0; xx < cx0 + cw; xx++) for (let y = top - 9; y < top; y++) set(xx, y, y === top - 9 ? '#2A3060' : xx === cx0 ? '#22285A' : body); }
+      else if (crown < .6) { const ax = x + (bw >> 1); for (let k = 0; k < 16; k++) set(ax, top - k, '#2A3060');   // an antenna with a warning light
+        set(ax - 1, top - 8, '#2A3060'); set(ax + 1, top - 8, '#2A3060'); set(ax, top - 16, '#FF4A6A'); }
+      else if (crown < .78 && bw > 26) { for (let y = top - 4; y < top; y++) { set(x + 5, y, '#2A3060'); set(x + bw - 6, y, '#2A3060'); }   // a rooftop billboard
+        for (let y = top - 16; y < top - 4; y++) for (let xx = x + 3; xx < x + bw - 3; xx++) set(xx, y, y === top - 16 || y === top - 5 || xx === x + 3 || xx === x + bw - 4 ? nc0 : '#24163E');
+        for (let xx = x + 6; xx < x + bw - 6; xx++) set(xx, top - 10 + Math.round(Math.sin(xx * .5) * 2), '#FFD2E6'); }
+      for (let wy = top + 4; wy < bottom - 4; wy += 5) for (let wx = x + 3; wx < x + bw - 3; wx += 4) if (r() < .16) {   // window grid
+        const c = r() < .6 ? '#5A6CC8' : r() < .5 ? '#B07AD8' : '#FFB8D8'; set(wx, wy, c); set(wx + 1, wy, c); set(wx, wy + 1, c); set(wx + 1, wy + 1, c); }
+      if (r() < .35) { const nc = NEON[r() * 3 | 0], nx = x + (r() < .5 ? 1 : bw - 7), ny = top + 8 + (r() * 30 | 0), nh = 18 + (r() * 26 | 0);   // vertical neon sign
+        for (let y = 0; y < nh; y++) for (let k = 0; k < 6; k++) set(nx + k, ny + y, k === 0 || k === 5 || y === 0 || y === nh - 1 ? nc : (y % 6 > 1 && k > 1 && k < 4 && r() < .7 ? nc : '#1A0E22')); }
+      if (r() < .2 && bw > 24) { const ax = x + 3, ay = top + 6 + (r() * 30 | 0), aw = bw - 6, ah = 14, c1 = NEON[r() * 3 | 0], c2 = NEON[(r() * 3 | 0)];   // an ad screen
+        for (let y = 0; y < ah; y++) for (let k = 0; k < aw; k++) set(ax + k, ay + y, y === 0 || y === ah - 1 || k === 0 || k === aw - 1 ? c2 : y > ah - 5 ? '#120A22' : c1);
+        for (let k = 3; k < aw - 3; k++) set(ax + k, ay + 6 + Math.round(Math.sin(k * .45) * 2), '#FFFFFF');
+        for (let k = 3; k < Math.min(aw - 3, 16); k += 2) set(ax + k, ay + ah - 3, c2); }
+    }
+    if (kind === 'near') { const nc = NEON[r() * 3 | 0];                                                        // shop fronts
+      for (let xx = x + 1; xx < x + bw - 1; xx++) { set(xx, bottom - 18, nc); if ((xx - x) % 3) set(xx, bottom - 10, '#1E2236'); }
+      for (let xx = x + 3; xx < x + bw - 3; xx++) for (let y = bottom - 16; y < bottom - 11; y++) set(xx, y, (xx + y) % 5 ? '#2A1E3A' : nc); }
+    x += bw + (far ? (r() < .5 ? 8 + (r() * 20 | 0) : 0) : r() < .45 ? 10 + (r() * 22 | 0) : 0);      // breathing room between towers
+  }
+  return L.done();
+}
+/* downtown at street level: low shops with neon signs and lit windows, rooftop clutter, cables, palms and street props */
+function paintStreet() {
+  const c = document.createElement('canvas'); c.width = TILE; c.height = H; const g = c.getContext('2d'), r = rng(808);
+  const glow = (x, y, w, h, col, a = .22) => { g.fillStyle = col; g.globalAlpha = a; g.fillRect(x - 2, y - 2, w + 4, h + 4); g.globalAlpha = a * .45; g.fillRect(x - 5, y - 5, w + 10, h + 10); g.globalAlpha = 1; };
+  const NAMES = ['NOODLES', 'ARCADE', 'HOTEL', 'KARAOKE', 'SUSHI', 'TATTOO', 'LAUNDRY', 'RAMEN', 'BAR', 'DINER'];
+  const BODY = ['#16183A', '#1C1A44', '#201842', '#141C3C'], LIT = ['#F2A0C8', '#B89AF0', '#9AB4FF'], INK = '#0A0B1C', SKIN = '#2A2C4E';
+  const blocks = [], stopOx = CLIENT_X - 60 - 66 * 1.5 - 60, clear0 = ((CLIENT_X - 22 - stopOx + stopOx * .6) % TILE + TILE) % TILE, clear1 = clear0 + 48;   // the spot behind the client at his stop
+  for (let x = 6, i = 0; x < TILE - 70; i++) {
+    if (x < clear1 && x + 94 > clear0) { if (x + 58 > clear0) { x = clear1 + 2; continue; } }
+    const bw = Math.min(58 + (r() * 36 | 0), x < clear0 ? clear0 - x - 4 : 999), bh = 46 + (r() * 38 | 0), top = BASE - bh, body = BODY[i % 4], nc = NEON[i % 3], lc = LIT[(i + 1) % 3], kind = i % 4;
+    blocks.push([x, bw, top]);
+    px(g, x, top, bw, bh, body); px(g, x, top, 1, bh, '#2C2E5E'); px(g, x + bw - 2, top, 2, bh, '#0E1028'); px(g, x - 1, top, bw + 2, 2, INK);   // body, lit edge, parapet
+    for (let wy = top + 6; wy < BASE - 32; wy += 7) for (let wx = x + 5; wx < x + bw - 7; wx += 7) { const v = r();    // upper floors
+      if (v < .32) { const wc = v < .12 ? '#FFB8D8' : v < .22 ? '#B07AD8' : '#6A7CD8'; px(g, wx, wy, 4, 4, wc); px(g, wx, wy + 3, 4, 1, 'rgba(10,8,30,.3)'); }
+      else { px(g, wx, wy, 4, 4, '#0E1030'); if (v > .9) px(g, wx + 4, wy + 1, 3, 3, SKIN); } }          // dark windows, the odd wall AC unit
+    // rooftops: AC units, a water tank, a neon name on a frame, an antenna
+    if (kind === 0) [x + 6, x + 18].forEach(ax => { px(g, ax, top - 5, 9, 5, SKIN); px(g, ax + 2, top - 4, 3, 3, '#3A3C62'); px(g, ax + 3, top - 3, 1, 1, SKIN); });
+    if (kind === 1) { const tx = x + bw - 20; px(g, tx, top - 13, 11, 9, '#2A2448'); px(g, tx, top - 13, 11, 1, '#3A3462'); px(g, tx, top - 9, 11, 1, '#1E1A38');
+      px(g, tx + 1, top - 4, 1, 4, SKIN); px(g, tx + 9, top - 4, 1, 4, SKIN); }
+    if (kind === 2) { const nm = NAMES[(i + 3) % NAMES.length], tw = nm.length * 8 - 2, sx0 = x + Math.max(3, (bw - tw) >> 1);
+      if (tw < bw - 4) { px(g, sx0, top - 3, 1, 3, SKIN); px(g, sx0 + tw - 1, top - 3, 1, 3, SKIN); px(g, sx0 - 1, top - 4, tw + 2, 1, SKIN);
+        glow(sx0, top - 15, tw, 10, nc, .2); text2(g, nm, sx0, top - 15, nc); } }
+    if (kind === 3) { const ax = x + 10; px(g, ax, top - 20, 1, 20, SKIN); px(g, ax - 3, top - 12, 7, 1, SKIN); px(g, ax, top - 21, 1, 1, '#FF4A6A');
+      for (let k = -3; k <= 3; k++) px(g, x + bw - 14 + k, top - 4 + Math.round(k * k / 4), 1, 1, '#3A3C62'); }
+    // a fire escape, or a vertical neon sign on the side
+    if (kind === 0 || kind === 2) for (let fy = top + 10; fy < BASE - 26; fy += 10) { px(g, x + bw - 18, fy, 14, 1, '#34365E'); px(g, x + bw - 18, fy - 3, 1, 3, '#34365E'); px(g, x + bw - 5, fy - 3, 1, 3, '#34365E');
+      for (let k = 0; k < 9; k++) px(g, x + bw - 16 + k, fy + 1 + k, 1, 1, '#2A2C50'); }
+    else { const nm = ['HOTEL', 'BAR', 'RAMEN', 'DINER', 'SUSHI', '24H'][i % 6], vx = x + bw - 9, vy = top + 8, vh = nm.length * 7 + 3;
+      px(g, vx - 3, vy + 3, 3, 1, SKIN); glow(vx, vy, 7, vh, nc, .22); px(g, vx, vy, 7, vh, INK); px(g, vx, vy, 7, 1, nc); px(g, vx, vy + vh - 1, 7, 1, nc); px(g, vx, vy, 1, vh, nc); px(g, vx + 6, vy, 1, vh, nc);
+      [...nm].forEach((ch, k) => text(g, ch, vx + 2, vy + 2 + k * 7, '#FFE6F2')); }
+    // the shopfront: a lit window with shelves and goods, a door, an awning, the shop's name in neon
+    const sf = BASE - 18, ww = bw - 26;
+    px(g, x + 2, sf, bw - 4, 18, INK); glow(x + 5, sf + 3, ww, 13, lc, .14); px(g, x + 5, sf + 3, ww, 13, lc);
+    for (let k = 0; k < 2; k++) px(g, x + 6, sf + 8 + k * 4, ww - 2, 1, 'rgba(20,14,48,.45)');
+    for (let k = x + 8; k < x + 4 + ww; k += 6) px(g, k, sf + 5 + (k % 2), 3, 3, 'rgba(20,14,48,.5)');
+    if (r() < .6) { const cx0 = x + 10 + (r() * (ww - 14) | 0); px(g, cx0, sf + 6, 4, 10, 'rgba(18,12,40,.75)'); px(g, cx0 + 1, sf + 3, 3, 3, 'rgba(18,12,40,.75)'); }   // someone inside
+    px(g, x + bw - 18, sf + 2, 12, 16, '#1A1030'); px(g, x + bw - 17, sf + 3, 10, 15, lc); px(g, x + bw - 17, sf + 3, 10, 15, 'rgba(10,8,30,.4)'); px(g, x + bw - 9, sf + 10, 1, 2, '#FFE6F2');
+    px(g, x + 1, sf - 4, bw - 2, 3, nc); px(g, x + 1, sf - 1, bw - 2, 1, 'rgba(0,0,0,.45)'); for (let k = x + 2; k < x + bw - 2; k += 4) px(g, k, sf, 2, 1, nc);
+    const nm = NAMES[i % NAMES.length], tw = nm.length * 4 - 1;
+    if (tw + 8 < bw && kind !== 2) { const bx = x + ((bw - tw) >> 1) - 3; glow(bx, sf - 13, tw + 6, 8, nc, .28); px(g, bx, sf - 13, tw + 6, 8, INK);
+      px(g, bx, sf - 13, tw + 6, 1, nc); px(g, bx, sf - 6, tw + 6, 1, nc); text(g, nm, bx + 3, sf - 11, '#FFE6F2'); }
+    // street props: a glowing vending machine or a bin
+    if (i % 3 === 0) { const vx = x + bw + 2; glow(vx, BASE - 14, 8, 14, NEON[(i + 1) % 3], .2); px(g, vx, BASE - 14, 8, 14, NEON[(i + 1) % 3]); px(g, vx + 1, BASE - 12, 6, 6, '#FFE6F2');
+      px(g, vx + 1, BASE - 5, 6, 3, INK); [2, 4, 6].forEach(k => px(g, vx + k - 1, BASE - 8, 1, 1, INK)); }
+    else if (i % 3 === 1) { px(g, x + bw + 3, BASE - 7, 6, 7, '#2A2C4E'); px(g, x + bw + 2, BASE - 8, 8, 1, '#3A3C62'); }
+    x += bw + (r() < .45 ? 14 + (r() * 22 | 0) : 2);
+  }
+  // cables across the gaps with little lanterns
+  for (let k = 0; k < blocks.length - 1; k++) { const [ax, aw, at] = blocks[k], [bx, , bt] = blocks[k + 1], x0 = ax + aw, x1 = bx, y0 = at + 12, y1 = bt + 14;
+    if (x1 - x0 < 10 || (x0 < clear1 && x1 > clear0)) continue;
+    for (let xx = x0; xx <= x1; xx++) { const u = (xx - x0) / (x1 - x0), y = Math.round(y0 + (y1 - y0) * u + Math.sin(u * Math.PI) * 6);
+      px(g, xx, y, 1, 1, '#2C2E52'); if ((xx - x0) % 6 === 3) { const lc2 = NEON[(xx >> 3) % 3]; glow(xx, y + 1, 2, 2, lc2, .25); px(g, xx, y + 1, 2, 2, lc2); } } }
+  // palms, dark against the neon, like the ones on the coast
+  [140, 620, 700].forEach((px0, k) => { const h = 58 + k * 6;
+    for (let y = 0; y < h; y++) px(g, px0 + Math.round(Math.sin(y / h * 1.6) * 5), BASE - y, y < 8 ? 3 : 2, 1, '#1C1436');
+    const cx = px0 + 5, cy = BASE - h;
+    [[.7, .03], [.3, .045], [0, .06]].forEach(([a, b]) => [-1, 1].forEach(d => { for (let q = 1; q < 17; q++) {
+      const fx = cx + d * q, fy = Math.round(cy - q * a + q * q * b); px(g, fx, fy, 1, 1, '#3A2A62'); px(g, fx, fy + 1, 1, 1, '#22183E'); if (q % 2 && q > 3) px(g, fx, fy + 2, 1, 1, '#22183E'); } })); });
+  return c;
+}
+/* after the business center: the rain stops and the sun comes up over the same city */
+/* the coast on a Madeira morning: a clear sky, green volcanic ridges rising out of the sea */
+function paintMorningSky() {
+  const L = layer(W, H), stops = ['#4FAEE6', '#6CC0EC', '#8ED2F0', '#B4E2F2', '#D8EEEC', '#F6F0D4'];
+  for (let y = 0; y < 150; y++) { const f = Math.min(1, y / 128) * (stops.length - 1), i = Math.min(stops.length - 2, f | 0), t = f - i;
+    for (let x = 0; x < W; x++) L.set(x, y, dith(x, y, (t - .8) * 5) ? stops[i + 1] : stops[i]); }          // flat cartoon bands, blended only at the seams
+  const sx = 286, sy = 46;                                    // the morning sun, already up over the sea
+  for (let y = -19; y <= 19; y++) for (let x = -19; x <= 19; x++) { const d = Math.hypot(x, y);
+    if (d < 19) L.set(sx + x, sy + y, d < 11 ? '#FFFDF2' : d < 13 ? '#FFF2C0' : '#CDEBF4'); }
+  return L.done();
+}
+function paintIsland(far) {                                       // steep ridges with gaps of open sea; villages and clouds on the near one
+  const L = layer(TILE, 130), r = rng(far ? 171 : 172);
+  const h = periodic(far ? 173 : 174, far ? [[2, 22], [3, 14], [7, 6], [13, 3]] : [[3, 30], [5, 16], [9, 8], [19, 3], [31, 1.5]]);
+  const hgt = x => (far ? 34 : 20) + h(((x % TILE) + TILE) % TILE);
+  const C = far ? { base: '#8CC6BE', lit: '#A6D6CA', shade: '#7AB4B0', rock: '#7AA6A8' } : { base: '#3E9A5A', lit: '#64BC6A', shade: '#2E7E50', rock: '#454A58' };
+  for (let x = 0; x < TILE; x++) { const hh = hgt(x); if (hh < 12) continue;
+    const top = Math.round(128 - hh), slope = hgt(x + 3) - hgt(x - 3);
+    for (let y = top; y < 128; y++) { const d = y - top;
+      let col = slope < -1 && d < 6 - slope * 2 ? C.lit : slope > 1.5 && d > 3 ? C.shade : C.base;
+      if (far ? y > 125 : y > 122) col = !far && y === 123 ? '#5E6472' : C.rock;                     // dark basalt cliffs at the waterline
+      L.set(x, y, col); }
+    if (!far) L.set(x, 127, '#FFFFFF'); }
+  if (far) return L.done();
+  for (let v = 0; v < 18; v++) { const vx = r() * TILE | 0; if (hgt(vx) < 28) continue;                // white villages with orange roofs
+    for (let k = 0; k < 7; k++) { const x = (vx + Math.round((r() - .5) * 26) + TILE) % TILE, hx = hgt(x), y = Math.round(128 - hx + 7 + r() * Math.max(2, hx - 22));
+      if (hx < 16 || y > 115 || [0, 1, 2, 3].some(i => 128 - hgt(x + i) > y - 1)) continue;
+      for (let i = 0; i < 4; i++) { L.set((x + i) % TILE, y, '#E0683C'); L.set((x + i) % TILE, y + 1, '#F8F4EC'); L.set((x + i) % TILE, y + 2, i === 1 ? '#3E6A8A' : '#F8F4EC'); } } }
+  for (let x = 0; x < TILE; x++) { const hx = hgt(x); if (hx < 50 || hgt(x - 8) >= hx || hgt(x + 8) > hx) continue;    // clouds caught on the peaks
+    for (let rr = -4; rr <= 3; rr++) { const half = Math.round(16 * Math.sqrt(1 - (rr / 4.5) ** 2));
+      for (let k = -half; k <= half; k++) L.set((x + k + TILE) % TILE, Math.round(128 - hx + 5 + rr), rr < 1 ? '#FFFFFF' : '#DCEEF6'); }
+    x += 20; }
+  return L.done();
+}
+function paintOcean() {
+  const L = layer(W, H), r = rng(133), rows = ['#8FD4E8', '#6CC0E0', '#4FAAD6', '#3A92C8', '#2E7CB8', '#2768A6', '#22599A'];
+  for (let y = 128; y < H; y++) { const f = Math.min(rows.length - 1.01, (y - 128) / 4.2), i = f | 0;
+    for (let x = 0; x < W; x++) L.set(x, y, dith(x, y, (f - i - .7) * 3.3) ? rows[Math.min(rows.length - 1, i + 1)] : rows[i]); }
+  for (let y = 130; y < 168; y += 2) for (let x = 0, run = 0; x < W; x++) {                                  // the sun's path on the water
+    if (run > 0) { run--; L.set(x, y, Math.abs(x - 286) < 12 + (y - 128) * .5 ? '#FFF6D8' : '#C8E8F4'); continue; }
+    if (r() < (Math.abs(x - 286) < 12 + (y - 128) * .5 ? .35 : 0)) run = 2 + (r() * 6 | 0); }
+  return L.done();
+}
+function paintBeach(fore) {
+  const L = layer(TILE, fore ? 22 : H), r = rng(fore ? 152 : 151), y0 = fore ? 0 : 152, h = periodic(fore ? 153 : 154, [[3, 1.2], [7, .8]]);
+  for (let x = 0; x < TILE; x++) { const t0 = fore ? 0 : Math.round(y0 - h(x));
+    for (let y = t0; y < (fore ? 22 : H); y++) L.set(x, y, !fore && y - t0 < 3 ? (y === t0 ? '#CFA472' : '#D9B27C') : dith(x, y, (y - t0) / 20) ? '#EBC98E' : '#F6DDA8'); }
+  if (!fore) for (let i = 0; i < 9; i++) { const x = r() * TILE | 0, t0 = Math.round(y0 - h(x)), w0 = 5 + (r() * 6 | 0), h0 = 2 + (r() * 2 | 0);   // basalt rocks
+    for (let yy = 0; yy <= h0; yy++) for (let xx = 0; xx < w0; xx++) if (yy || (xx && xx < w0 - 1)) L.set((x + xx) % TILE, t0 - h0 + yy + 1, yy === 0 ? '#6A707E' : xx > w0 - 3 ? '#353A46' : '#454A58'); }
+  for (let i = 0; i < (fore ? 60 : 20); i++) L.set(r() * TILE | 0, (fore ? 2 : 158) + (r() * (fore ? 18 : 12) | 0), r() < .5 ? '#FFF6E2' : '#DDB984');
+  return L.done();
+}
+function paintFog() {                                             // smog glowing low over the street
+  const L = layer(W, H);
+  for (let y = 96; y < 172; y++) for (let x = 0; x < W; x++) if (dith(x, y, (y - 96) / 76 * .3)) L.set(x, y, '#4A2E62');
+  return L.done();
+}
+function paintStreak(col, w, seed = 1) {                       // a light's reflection on the wet road
+  const L = layer(w, 20), r = rng(seed), c = (w - 1) / 2;
+  for (let y = 0; y < 20; y += 2) { const half = Math.max(.5, c * (1 - y / 26) * (.25 + r() * .75)), off = (r() - .5) * 3;
+    for (let x = Math.round(c - half + off); x <= Math.round(c + half + off); x++) L.set(x, y, col); }
+  return L.done();
+}
+
+
+
+const SKY = paintSky(), CLOUDS = paintClouds();
+const FAR = paintRange(3, 150, 52, { base: '#7C79B9', lit: '#EFA39C', shade: '#6663A3', snow: '#E9E4F3', snowLit: '#FFF1EC', haze: '#B9A9CF' }, 98);
+const NEAR = paintRange(9, 160, 62, { base: '#4F4C8F', lit: '#D96B7C', shade: '#3E3B78', snow: '#DCD6EC', snowLit: '#FBD9DE', haze: '#6F6A9E' }, 92);
+const FOREST = paintForest(), MEADOW = paintMeadow(), ROAD = paintRoad(), FORE = paintFore();
+const NIGHT_SKY = paintNightSky(), FAR_NN = tinted(FAR, '#161B3C', .8), NEAR_NN = tinted(NEAR, '#0F1430', .82), FOREST_NN = tinted(FOREST, '#08101A', .8);
+const MEADOW_NN = tinted(MEADOW, '#121A26', .75), ROAD_NN = tinted(ROAD, '#13142A', .6);
+const STARS = (r => Array.from({ length: 16 }, () => [r() * W | 0, r() * 100 | 0, r() * 6]))(rng(78));
+const DUSK_SKY = paintDuskSky();
+const FAR_N = paintRange(3, 150, 52, { base: '#5A5498', lit: '#D27E94', shade: '#48427E', snow: '#BBB4DE', snowLit: '#F6C4CA', haze: '#7A6CA8' }, 98);
+const NEAR_N = paintRange(9, 160, 62, { base: '#3A3672', lit: '#B65A7C', shade: '#2E2A5E', snow: '#A9A3CF', snowLit: '#EAAABA', haze: '#4F4784' }, 92);
+const FOREST_N = paintForest({ g1: '#1A2834', g2: '#20303C', d1: '#111C28', d2: '#152230', m1: '#1A2A38', m2: '#20323E', tip: '#5A5482' });
+const MEADOW_N = paintMeadow(['#2C3838', '#36443E', '#E8C8E0', '#F2B8C8']), ROAD_N = tinted(ROAD, '#1E2142', .45), FORE_N = paintForeDusk();
+const FIREFLIES = (r => Array.from({ length: 34 }, () => [900 + r() * 1200, 142 + r() * 24, r() * 6, .7 + r() * .5]))(rng(77));
+
+/* ---------- the world (scrolls 1:1 with the road) ---------- */
+const UNI_X = 26, LIGHTS_X = 238, REST_X = 792, CHEF_X = 780, CAR_START = 60;
+const SHOP_X = 1584, OWNER_X = 1600;
+const GUARD_X = 2500, CAMP_X = 3190, CAFE_X = 3412, FOUNDER_X = 3400, TUN_A = 3640, TUN_B = 4120, TUN2_A = 4760, TUN2_B = 5260, TOWER_X = 4512, CLIENT_X = 4500, FINAL_X = 5640;
+const ANIMALS = [['deer', 1413, 157, 50, .09], ['fox', 1343, 162, 70, .16], ['hare', 1473, 160, 40, .22]];   // kind, home x, y, roam, pace
+// how the world looks along the road: [camera position, look]; between two keys it crossfades
+const KEYS = [[0, 'day'], [820, 'day'], [1300, 'dusk'], [1640, 'dusk'], [1880, 'night'], [1940, 'night'], [2270, 'winter'],
+              [2700, 'winter'], [3050, 'coast'], [3670, 'coast'], [3706, 'enterprise'], [4790, 'enterprise'], [4846, 'vista']]   // the beach turns into the city inside the tunnel;
+const BASE = 168;                                    // where buildings stand
+
+function university(g, ox) {
+  const x0 = UNI_X - ox, w = 168, top = 98;
+  if (x0 > W || x0 + w < -10) return;
+  const cx = x0 + w / 2, PH = 22, baseY = top - 5;                       // triangular pediment
+  for (let r = 0; r <= PH; r++) { const half = Math.round((w / 2 + 4) * (1 - r / PH));
+    px(g, cx - half, baseY - r, half * 2, 1, '#E4D9C3');
+    if (half > 1) { px(g, cx - half, baseY - r, 2, 1, '#BFB297'); px(g, cx + half - 2, baseY - r, 2, 1, '#BFB297'); }
+    const inner = half - 9; if (r > 3 && inner > 0) px(g, cx - inner, baseY - r, inner * 2, 1, '#EFE7D5'); }
+  for (let y = -3; y <= 3; y++) for (let x = -3; x <= 3; x++) if (x * x + y * y <= 9) px(g, cx + x, baseY - 9 + y, 1, 1, x * x + y * y > 4 ? '#BFB297' : '#D9CDB4');  // round emblem
+  px(g, x0 - 4, baseY, w + 8, 2, '#BFB297');                                // cornice
+  px(g, x0, top - 3, w, 3, '#D6CAB1');
+  px(g, x0 + 4, top, w - 8, BASE - top, '#EEE6D4');
+  for (let i = 0; i < 8; i++) { const cx = x0 + 14 + i * 20; px(g, cx, top + 12, 7, BASE - top - 20, '#F7F1E4'); px(g, cx + 5, top + 12, 2, BASE - top - 20, '#D9CDB4'); px(g, cx - 1, top + 10, 9, 2, '#D6CAB1'); }
+  for (let i = 0; i < 7; i++) { const cx = x0 + 23 + i * 20; px(g, cx, top + 26, 9, 22, '#5B6E86'); px(g, cx, top + 26, 9, 2, '#7C90A8'); }
+  for (let s = 0; s < 4; s++) px(g, x0 + 2 + s * 2, BASE - 8 + s * 2, w - 4 - s * 4, 2, s % 2 ? '#CFC3AB' : '#DED3BD');      // steps
+  const name = 'ALFRED NOBEL UNIVERSITY';
+  px(g, x0 + w / 2 - textW(name) / 2 - 4, top + 1, textW(name) + 8, 9, '#2D2A3A');
+  text(g, name, Math.round(x0 + w / 2 - textW(name) / 2), top + 3, '#F4D58A');
+  // two lindens either side
+  [[x0 - 14, '#4D7A3E'], [x0 + w + 4, '#557F42']].forEach(([tx, c]) => { px(g, tx + 6, BASE - 26, 3, 26, '#5A4636');
+    for (let k = 0; k < 40; k++) { const a = k * 2.4, rr = (k % 7) + 4; px(g, tx + 7 + Math.cos(a) * rr, BASE - 38 + Math.sin(a) * rr * .8, 5, 5, k % 3 ? c : '#6E9A55'); } });
+}
+
+function startLights(g, ox, lit) {
+  const x0 = LIGHTS_X - ox;
+  if (x0 < -40 || x0 > W) return;
+  px(g, x0 + 15, 116, 3, BASE + 4 - 116, '#2B2833');
+  px(g, x0, 106, 33, 11, '#1B1922'); px(g, x0, 106, 33, 1, '#3A3644');
+  for (let i = 0; i < 5; i++) { const on = i < lit; px(g, x0 + 3 + i * 6, 109, 4, 5, on ? '#FF3B3B' : '#3B3542'); if (on) px(g, x0 + 4 + i * 6, 109, 1, 1, '#FFC2C2'); }
+}
+
+function lamp(g, x) { px(g, x, BASE - 30, 2, 34, '#2F2C38'); px(g, x - 2, BASE - 32, 6, 2, '#2F2C38'); px(g, x - 1, BASE - 30, 4, 2, '#FFE2A6'); }
+
+function restaurant(g, ox, t) {
+  const x0 = REST_X - ox, w = 148, top = 92;
+  if (x0 > W || x0 + w < -20) return;
+  px(g, x0, top, w, BASE - top, '#C9714F');                                      // plaster
+  for (let y = top; y < BASE; y += 3) for (let x = x0 + ((y / 3) % 2) * 3; x < x0 + w; x += 7) px(g, x, y, 1, 1, '#B9643F');
+  px(g, x0 - 3, top - 4, w + 6, 4, '#E8D8BE'); px(g, x0 - 3, top - 5, w + 6, 1, '#F6EAD5');                // cornice
+  for (let i = 0; i < 4; i++) { const wx = x0 + 14 + i * 34; px(g, wx - 4, top + 8, 4, 18, '#4E6B4A'); px(g, wx + 14, top + 8, 4, 18, '#4E6B4A');
+    px(g, wx, top + 8, 14, 18, '#FFD58A'); px(g, wx, top + 16, 14, 1, '#E7B66A'); px(g, wx + 6, top + 8, 1, 18, '#E7B66A');
+    px(g, wx - 2, top + 26, 18, 2, '#E8D8BE'); px(g, wx, top + 24, 14, 2, '#5E8C3A'); for (let f = 0; f < 5; f++) px(g, wx + 1 + f * 3, top + 23, 1, 1, f % 2 ? '#F05A5A' : '#FFFFFF'); }
+  // sign board
+  const s = 'RESTAURANT'; px(g, x0 + w / 2 - 26, top + 31, 52, 9, '#2D2A3A'); text(g, s, Math.round(x0 + w / 2 - textW(s) / 2), top + 33, '#F4D58A');
+  // striped awning with scalloped edge
+  for (let x = 0; x < w + 8; x++) { const stripe = ((x / 6) | 0) % 2 ? '#3E6B54' : '#F2E9D3';
+    for (let y = 0; y < 9; y++) px(g, x0 - 4 + x, top + 42 + y + (y > 6 && x % 6 > 2 ? 1 : 0), 1, 1, y > 7 ? (x % 6 > 2 ? stripe : '#00000000') : stripe); }
+  // ground floor: glowing windows and the door
+  [[x0 + 8, 46], [x0 + w - 54, 46]].forEach(([wx, ww]) => { px(g, wx, top + 54, ww, 22, '#FFCF7A'); px(g, wx, top + 54, ww, 2, '#F0B65A');
+    for (let k = 0; k < ww; k += 12) px(g, wx + k, top + 54, 1, 22, '#8C5A3C'); px(g, wx + 5, top + 66, 6, 3, '#C98B52'); px(g, wx + 20, top + 64, 4, 5, '#C98B52'); });
+  px(g, x0 + w / 2 - 9, top + 52, 18, BASE - top - 52, '#5A3A2E'); px(g, x0 + w / 2 - 7, top + 55, 14, 9, '#FFCF7A'); px(g, x0 + w / 2 + 5, top + 66, 2, 2, '#F4D58A');
+  // three awards by the door, catching the light
+  for (let i = 0; i < 3; i++) { const ax = x0 + w / 2 + 12, ay = top + 52 + i * 7; px(g, ax, ay, 6, 5, '#E3B341'); px(g, ax + 1, ay + 1, 4, 3, '#FFF1C4'); }
+  if (((t * 1.3) | 0) % 3 === 0) px(g, x0 + w / 2 + 17, top + 51, 1, 1, '#FFFFFF');
+  // string lights across the terrace
+  for (let x = 0; x < w; x += 2) { const y = top + 44 + Math.round(Math.sin(x / w * Math.PI) * 3);
+    if (x % 8 === 0) px(g, x0 + x, y + 9, 1, 1, ((x / 8 + (t * 2 | 0)) % 3) ? '#FFE6A6' : '#FFFFFF'); }
+  // terrace tables
+  [x0 + 30, x0 + 104].forEach(tx => { px(g, tx, BASE - 8, 14, 2, '#F2E9D3'); px(g, tx + 6, BASE - 6, 2, 6, '#3A3644');
+    px(g, tx - 6, BASE - 7, 4, 7, '#3A3644'); px(g, tx + 16, BASE - 7, 4, 7, '#3A3644'); px(g, tx + 4, BASE - 11, 2, 3, '#F05A5A'); });
+  // potted bay trees
+  [x0 - 10, x0 + w + 4].forEach(px0 => { px(g, px0, BASE - 7, 7, 7, '#B5653F'); for (let k = 0; k < 18; k++) px(g, px0 + 1 + (k % 4) * 1.5, BASE - 18 + (k / 4 | 0) * 2, 3, 3, k % 2 ? '#4E7A3E' : '#628F4C'); });
+}
+
+function chef(g, ox, t, waving) {
+  const x = Math.round(CHEF_X - ox), y = BASE + 2, bob = Math.round(Math.sin(t * 2.4));
+  if (x < -20 || x > W + 20) return null;
+  px(g, x - 1, y - 1, 12, 2, 'rgba(0,0,0,.25)');
+  px(g, x + 2, y - 7, 3, 7, '#2B2833'); px(g, x + 6, y - 7, 3, 7, '#2B2833'); px(g, x + 1, y - 1, 4, 1, '#111'); px(g, x + 6, y - 1, 4, 1, '#111');
+  px(g, x + 1, y - 17 + bob, 9, 11, '#F7F3EA'); px(g, x + 8, y - 17 + bob, 2, 11, '#DCD6CA');                 // jacket
+  px(g, x + 4, y - 15 + bob, 1, 1, '#9C9387'); px(g, x + 4, y - 12 + bob, 1, 1, '#9C9387');
+  px(g, x + 2, y - 8 + bob, 7, 2, '#2E5E8C');                                                                 // apron tie
+  px(g, x + 3, y - 22 + bob, 5, 5, '#E7B38E'); px(g, x + 6, y - 20 + bob, 1, 1, '#2B2833'); px(g, x + 4, y - 18 + bob, 3, 1, '#7A3B2E'); // face
+  px(g, x + 2, y - 28 + bob, 7, 6, '#FFFFFF'); px(g, x + 1, y - 27 + bob, 9, 3, '#FFFFFF'); px(g, x + 2, y - 23 + bob, 7, 1, '#E3DDD2'); // toque
+  const up = waving && ((t * 4) | 0) % 2;
+  if (waving) { px(g, x + 10, y - (up ? 25 : 21) + bob, 2, 7, '#F7F3EA'); px(g, x + 10, y - (up ? 26 : 22) + bob, 2, 2, '#E7B38E'); }
+  else px(g, x + 10, y - 16 + bob, 2, 7, '#F7F3EA');
+  px(g, x - 1, y - 16 + bob, 2, 7, '#F7F3EA');
+  return { x: x + 5, top: y - 29 + bob };
+}
+
+/* scene 2: "coming soon": a new restaurant getting its brand */
+function opening(g, ox, t, dusk) {                                 // a new bistro, not open yet: its brand going up
+  const x0 = Math.round(SHOP_X - ox), w = 150, top = BASE - 94, sf = BASE - 58;   // sf: top of the shopfront
+  if (x0 > W + 30 || x0 + w < -40) return;
+  const GREEN = '#24403A', GREEN_D = '#18302A', GOLD = '#C9A24A', CREAM = '#F4EEE2';
+  // upper floor: warm cream stone, a cornice, three tall windows with shutters and flower boxes
+  px(g, x0, top, w, sf - top, '#E2D2B6'); px(g, x0 + w - 5, top, 5, sf - top, '#C8B698');
+  for (let y = top + 4; y < sf; y += 5) px(g, x0, y, w - 5, 1, '#D6C4A6');
+  px(g, x0 - 3, top - 5, w + 6, 5, '#EEE2CA'); px(g, x0 - 3, top, w + 6, 1, '#C8B698');
+  for (let x = x0 - 2; x < x0 + w + 2; x += 4) px(g, x, top + 1, 2, 2, '#C8B698');                       // dentils
+  [x0 + 18, x0 + 65, x0 + 112].forEach((wx, i) => {
+    px(g, wx - 1, top + 6, 18, 24, '#5A4A3E'); px(g, wx, top + 7, 16, 22, i === 1 ? '#FFD08A' : '#3E4870');
+    if (i === 1) { px(g, wx + 2, top + 12, 5, 10, '#F2B870'); px(g, wx + 9, top + 10, 4, 12, '#E8A060'); }
+    px(g, wx + 7, top + 7, 2, 22, '#5A4A3E'); px(g, wx, top + 17, 16, 1, '#5A4A3E');
+    px(g, wx - 6, top + 6, 5, 24, '#3E5A50'); px(g, wx + 17, top + 6, 5, 24, '#3E5A50');               // shutters
+    for (let y = top + 8; y < top + 29; y += 3) { px(g, wx - 5, y, 3, 1, '#2E4A42'); px(g, wx + 18, y, 3, 1, '#2E4A42'); }
+    px(g, wx - 2, top + 30, 20, 3, '#8A6A4A'); for (let k = 0; k < 18; k += 2) px(g, wx - 1 + k, top + 28, 2, 2, k % 4 ? '#5E8A4E' : '#7AA05A');   // flower box
+  });
+  // the shopfront: painted green wood with a thin gold line
+  px(g, x0 - 2, sf, w + 4, BASE - sf, GREEN); px(g, x0 - 2, sf, w + 4, 1, GOLD); px(g, x0 + w - 3, sf, 5, BASE - sf, GREEN_D);
+  // the fascia sign, half revealed under a cloth
+  const fy = sf + 2;
+  px(g, x0 + 4, fy, w - 8, 11, GREEN_D); px(g, x0 + 4, fy, w - 8, 1, GOLD); px(g, x0 + 4, fy + 10, w - 8, 1, GOLD);
+  const lx = x0 + 22, ly = fy + 5;
+  for (let y = -4; y <= 4; y++) for (let x = -4; x <= 4; x++) if (x * x + y * y <= 16) px(g, lx + x, ly + y, 1, 1, x * x + y * y > 8 ? GOLD : GREEN_D);
+  px(g, lx - 1, ly - 2, 2, 5, GOLD); px(g, lx + 1, ly - 3, 1, 2, '#8AA06A');                             // an olive in the logo
+  text(g, 'OLIV', lx + 8, ly - 2, CREAM);
+  for (let x = 0; x < 64; x++) { const fold = Math.round(Math.sin(x * .6 + t * .8) * .6);              // the cloth over the rest of the sign
+    px(g, x0 + 56 + x, fy - 2 + fold, 1, 15 + (x % 9 < 2 ? 2 : 0), x % 6 < 2 ? '#DCD2C4' : '#EEE6DA'); }
+  px(g, x0 + 56, fy - 2, 1, 15, '#C8BCAC');
+  // tall windows papered from inside, with sketches taped on; the door between them
+  const gy = fy + 27, gh = BASE - gy - 3;
+  const pane = (px0, pw) => { px(g, px0 - 1, gy - 1, pw + 2, gh + 2, GOLD); px(g, px0, gy, pw, gh, '#DCC28E'); for (let k = px0 + 7; k < px0 + pw; k += 8) px(g, k, gy, 1, gh, '#CDB078'); };
+  pane(x0 + 8, 46); pane(x0 + 92, 46);
+  const tape = (x, y) => px(g, x - 1, y - 1, 3, 2, '#F4EEE2');
+  px(g, x0 + 12, gy + 4, 13, 11, CREAM); for (let y = -3; y <= 3; y++) for (let x = -3; x <= 3; x++) if (Math.abs(x * x + y * y - 8) < 3) px(g, x0 + 18 + x, gy + 9 + y, 1, 1, '#5A5A66'); tape(x0 + 12, gy + 4); tape(x0 + 24, gy + 4);
+  [GREEN, GOLD, '#8AA06A', '#E8D8B8'].forEach((c, i) => px(g, x0 + 30 + i * 5, gy + 5, 4, 4, c)); tape(x0 + 30, gy + 4);
+  px(g, x0 + 30, gy + 12, 18, 7, CREAM); px(g, x0 + 32, gy + 14, 12, 1, '#5A5A66'); px(g, x0 + 32, gy + 16, 9, 1, '#5A5A66');
+  px(g, x0 + 96, gy + 3, 14, 11, CREAM); glyph(g, ['.##.', '#..#', '####', '#..#'], x0 + 98, gy + 5, 1, '#1E1C28'); glyph(g, ['....', '.##.', '..##', '.###'], x0 + 103, gy + 5, 1, '#1E1C28'); tape(x0 + 96, gy + 3);
+  px(g, x0 + 116, gy + 5, 16, 12, CREAM); px(g, x0 + 118, gy + 8, 12, 1, GOLD); px(g, x0 + 118, gy + 11, 9, 1, '#5A5A66'); px(g, x0 + 118, gy + 13, 10, 1, '#5A5A66'); tape(x0 + 124, gy + 5);
+  px(g, x0 + 60, gy - 1, 26, BASE - gy + 1, GOLD); px(g, x0 + 61, gy, 24, BASE - gy, GREEN_D); px(g, x0 + 64, gy + 3, 18, 14, '#DCC28E');
+  px(g, x0 + 79, gy + 22, 2, 3, GOLD);
+  // "coming soon" on a green board right under the sign
+  const by = fy + 14, bw = 65, bx = Math.round(x0 + (w - bw) / 2);
+  px(g, bx, by, bw, 11, GREEN_D); px(g, bx, by, bw, 1, GOLD); px(g, bx, by + 10, bw, 1, GOLD); px(g, bx, by, 1, 11, GOLD); px(g, bx + bw - 1, by, 1, 11, GOLD);
+  [...'COMING SOON'].forEach((ch, i) => text(g, ch, bx + 6 + i * 5, by + 3, CREAM));                    // small letters, spaced out, with room inside the frame
+  // brass lanterns either side of the door
+  [x0 + 56, x0 + 89].forEach(lp => { px(g, lp, gy + 4, 3, 1, GOLD); px(g, lp, gy + 5, 3, 5, '#2A2420'); px(g, lp + 1, gy + 6, 1, 3, '#FFE2A0'); });
+  // paint cans, a box of new menus, olive trees in planters waiting by the door
+  [[x0 + 36, GOLD], [x0 + 43, GREEN]].forEach(([cx, c]) => { px(g, cx, BASE - 7, 6, 7, '#C9CED8'); px(g, cx, BASE - 7, 6, 2, c); px(g, cx + 2, BASE - 5, 1, 3, c); });
+  px(g, x0 + 124, BASE - 7, 16, 7, '#A8754A'); px(g, x0 + 124, BASE - 7, 16, 1, '#C9955A'); px(g, x0 + 126, BASE - 10, 12, 3, CREAM); px(g, x0 + 126, BASE - 9, 12, 1, GREEN);
+  [x0 - 12, x0 + w + 3].forEach(p => { px(g, p, BASE - 9, 10, 9, '#3A3A40'); px(g, p, BASE - 9, 10, 1, '#5A5A62'); px(g, p + 4, BASE - 20, 2, 11, '#5A4A3E');
+    for (let k = 0; k < 24; k++) px(g, p - 1 + (k % 6) * 2, BASE - 32 + (k / 6 | 0) * 3, 3, 3, k % 3 ? '#8A9A6A' : '#A8B486'); });
+  if (dusk > 0) { g.globalAlpha = dusk * .1;                                                           // warm light around the front
+    [[44, .9], [30, 1]].forEach(([rr]) => { for (let y = -rr; y < 4; y++) { const half = Math.round(Math.sqrt(Math.max(0, rr * rr - y * y)) * 2.2); px(g, x0 + 75 - half, BASE + y, half * 2, 1, '#FFD8A0'); } });
+    g.globalAlpha = 1; }
+}
+
+function owner(g, ox, t, waving) {                                 // the bistro's owner, holding the rope that will reveal the new sign
+  const x = Math.round(OWNER_X - ox), y = BASE + 2, bob = Math.round(Math.sin(t * 2 + 1) * .5);
+  if (x < -20 || x > W + 20) return null;
+  person(g, x, y, bob, { legs: '#2A2A34', shoes: '#4A3426', top: '#F4F4F2', topShade: '#CFCFD6', skin: '#E2A985' });
+  px(g, x + 2, y - 13 + bob, 7, 7, '#24403A'); px(g, x + 2, y - 13 + bob, 7, 1, '#C9A24A'); px(g, x + 3, y - 16 + bob, 1, 3, '#24403A'); px(g, x + 7, y - 16 + bob, 1, 3, '#24403A');   // green apron
+  px(g, x + 2, y - 25 + bob, 7, 3, '#8A4A2E'); px(g, x + 2, y - 22 + bob, 1, 5, '#8A4A2E'); px(g, x + 8, y - 22 + bob, 1, 4, '#8A4A2E');   // auburn hair
+  px(g, x - 1, y - 24 + bob, 2, 9, '#F4F4F2'); px(g, x - 1, y - 26 + bob, 2, 2, '#E2A985');                                     // the arm holding the rope
+  const sx = SHOP_X - ox + 56, sy = BASE - 55;                                                         // pulled taut to the top of the cloth, clear of the boards
+  for (let k = 0; k <= 40; k++) { const f = k / 40; px(g, Math.round(x + (sx - x) * f), Math.round(y - 26 + bob + (sy - y + 26 - bob) * f), 1, 1, '#C9B89A'); }
+  wave(g, x, y, bob, t, waving, '#F4F4F2', '#CFCFD6', '#E2A985');
+  return { x: x + 5, top: y - 27 + bob };
+}
+
+/* scene 3: the border with Poland in winter */
+function flag(g, x, top, a, b, t) {
+  px(g, x, top, 1, BASE - top, '#C9CED8');
+  for (let c = 0; c < 14; c++) { const w = Math.round(Math.sin(t * 4 - c * .6) * c / 12);
+    px(g, x + 1 + c, top + 1 + w, 1, 4, a); px(g, x + 1 + c, top + 5 + w, 1, 4, b); }
+}
+let barrier = 0;                                                     // 0 down, 1 up once the guard lets you through
+function border(g, ox, t) {
+  const x0 = Math.round(GUARD_X - ox);
+  if (x0 > W + 40 || x0 + 220 < -40) return;
+  const bx = x0 + 14;                                                                            // the booth
+  px(g, bx, BASE - 34, 34, 34, '#EEF1F6'); px(g, bx + 28, BASE - 34, 6, 34, '#C9D0DC'); px(g, bx, BASE - 14, 34, 3, '#D7263D');
+  px(g, bx + 5, BASE - 29, 20, 11, '#2A2E4A'); px(g, bx + 6, BASE - 28, 18, 9, '#FFD98A'); px(g, bx + 14, BASE - 28, 1, 9, '#2A2E4A');
+  px(g, bx - 3, BASE - 38, 40, 4, '#3A3F55'); px(g, bx - 3, BASE - 40, 40, 2, '#F2F6FF');            // roof with snow
+  text(g, 'BORDER', bx + 6, BASE - 9, '#2A2E4A');
+  const fx = x0 + 54, ft = BASE - 50;                                                                 // the EU flag
+  px(g, fx, ft, 1, BASE - ft, '#C9CED8');
+  for (let c = 0; c < 15; c++) { const w = Math.round(Math.sin(t * 4 - c * .6) * c / 12); px(g, fx + 1 + c, ft + 1 + w, 1, 10, '#1F4AA8');
+    for (let k = 0; k < 10; k++) { const q = k / 10 * Math.PI * 2, sx0 = 8 + Math.round(Math.cos(q) * 3.4), sy0 = 6 + Math.round(Math.sin(q) * 3.4); if (sx0 === c + 1) px(g, fx + 1 + c, ft + sy0 + w, 1, 1, '#F7D23E'); } }
+  const px0 = x0 + 120;                                                                            // the barrier
+  px(g, px0, BASE - 16, 4, 16, '#3A3F55'); px(g, px0 - 1, BASE - 17, 6, 2, '#F2F6FF');
+  const a = barrier * Math.PI / 2;
+  for (let k = 0; k < 44; k++) { const xx = px0 + 1 - Math.round(Math.cos(a) * k), yy = BASE - 14 - Math.round(Math.sin(a) * k);
+    px(g, xx, yy, 2, 2, ((k / 6) | 0) % 2 ? '#D7263D' : '#F4F4F2'); }
+  const sx = x0 + 142;                                                                             // the border sign
+  px(g, sx + 6, BASE - 20, 2, 20, '#8A8F9C'); px(g, sx + 40, BASE - 20, 2, 20, '#8A8F9C');
+  px(g, sx, BASE - 40, 48, 22, '#F4F4F2'); px(g, sx + 1, BASE - 39, 46, 20, '#1F4AA8'); px(g, sx, BASE - 42, 48, 2, '#F2F6FF');
+  for (let k = 0; k < 12; k++) { const q = k / 12 * Math.PI * 2; px(g, sx + 10 + Math.round(Math.cos(q) * 6), BASE - 29 + Math.round(Math.sin(q) * 6), 1, 1, '#F7D23E'); }
+  text(g, 'EUROPE', sx + 20, BASE - 31, '#FFFFFF');
+}
+function animal(g, kind, x, y, t, dir) {                          // drawn facing right, mirrored when walking left
+  const R = (rx, ry, w, h, c) => px(g, dir > 0 ? x + rx : x + 14 - rx - w, y + ry, w, h, c), step = ((t * 6) | 0) % 2;
+  if (kind === 'deer') { const graze = Math.sin(t * .9 + 2) > .55;
+    R(0, -8, 12, 5, '#6A5260'); R(9, -8, 3, 5, '#56424E'); R(-1, -8, 2, 2, '#E6EEFA');
+    [[0, step], [3, 1 - step], [8, step], [10, 1 - step]].forEach(([o, s2]) => R(o, -3, 1, 3 + s2, '#56424E'));
+    if (graze) { R(12, -5, 2, 3, '#6A5260'); R(13, -3, 3, 2, '#6A5260'); }
+    else { R(11, -12, 2, 5, '#6A5260'); R(12, -13, 4, 3, '#6A5260'); R(11, -16, 1, 3, '#8A7A6A'); R(13, -17, 1, 4, '#8A7A6A'); R(10, -17, 1, 1, '#8A7A6A'); R(14, -18, 1, 1, '#8A7A6A'); } }
+  else if (kind === 'fox') { const sway = Math.round(Math.sin(t * 2) * 1);
+    R(0, -5, 9, 4, '#C8683A'); R(8, -7, 4, 4, '#C8683A'); R(11, -5, 2, 2, '#E6EEFA'); R(8, -8, 1, 1, '#C8683A'); R(10, -8, 1, 1, '#C8683A');
+    [[1, step], [3, 1 - step], [6, step], [8, 1 - step]].forEach(([o, s2]) => R(o, -1, 1, 1 + s2, '#3A2A2A'));
+    R(-5, -6 + sway, 6, 3, '#C8683A'); R(-6, -6 + sway, 2, 3, '#F2F6FF'); }
+  else { const hop = Math.round(Math.abs(Math.sin(t * 5)) * 5);                                       // a hare, hopping
+    R(0, -5 - hop, 7, 4, '#B8B0B4'); R(6, -7 - hop, 3, 3, '#B8B0B4'); R(7, -11 - hop, 1, 4, '#A8A0A4'); R(8, -10 - hop, 1, 3, '#A8A0A4');
+    R(-1, -5 - hop, 2, 2, '#FFFFFF'); R(1, -1 - hop, 3, 1, '#9A9296'); R(5, -2 - hop, 2, 2, '#9A9296'); }
+}
+
+/* scene 4, on the way in: surfers under palms */
+function palm(g, x, h, lean) {                                     // a palm: a curved, ringed trunk and drooping fronds
+  for (let y = 0; y < h; y++) { const f = y / h; px(g, x + Math.round(lean * f * f * 10), BASE - y, y < 8 ? 3 : 2, 1, (y >> 1) % 3 ? '#9A7650' : '#7A5A3C'); }
+  const cx = x + lean * 10 + 1, cy = BASE - h;
+  [[.7, .03], [.3, .045], [0, .06]].forEach(([a, b]) => [-1, 1].forEach(d => { for (let k = 1; k < 16; k++) {
+    const fx = cx + d * k, fy = Math.round(cy - k * a + k * k * b); px(g, fx, fy, 1, 1, '#6CC46A'); px(g, fx, fy + 1, 1, 1, '#3FA05A'); if (k % 2 && k > 3) px(g, fx, fy + 2, 1, 1, '#2F8A4E'); } }));
+  px(g, cx - 1, cy + 1, 2, 2, '#7A5A2A'); px(g, cx + 1, cy + 2, 2, 2, '#6A4A22');
+}
+function camp(g, ox, t) {
+  const x0 = Math.round(CAMP_X - ox);
+  if (x0 > W + 40 || x0 + 180 < -40) return;
+  palm(g, x0 + 12, 58, 1); palm(g, x0 + 104, 48, -1);
+  // two surfers in wetsuits: one with a board under the arm, one leaning on a board
+  const bob = Math.round(Math.sin(t * 2) * .5), y = BASE + 2;
+  person(g, x0 + 132, y, bob, { legs: '#1E2230', shoes: '#C9A274', top: '#1E2230', topShade: '#2E3448', skin: '#E2A985' });
+  px(g, x0 + 134, y - 25 + bob, 6, 3, '#E8C46A');
+  px(g, x0 + 131, y - 12 + bob, 17, 4, '#F4F4F2'); px(g, x0 + 148, y - 11 + bob, 2, 2, '#F4F4F2'); px(g, x0 + 131, y - 10 + bob, 18, 1, '#E8514A'); px(g, x0 + 138, y - 13 + bob, 2, 3, '#E2A985');
+  person(g, x0 + 156, y, -bob, { legs: '#1E2230', shoes: '#B07A52', top: '#1E2230', topShade: '#2E3448', skin: '#B07A52' });
+  px(g, x0 + 159, y - 25 - bob, 5, 3, '#2A2228'); px(g, x0 + 167, y - 32, 5, 31, '#3FB59A'); px(g, x0 + 168, y - 34, 3, 2, '#3FB59A'); px(g, x0 + 169, y - 31, 1, 29, '#F4F4F2');
+}
+
+/* scene 4: a beach café on the coast, a Madeira house like the ones on the hills: white walls, terracotta roof, basalt stone, green shutters */
+function cafe(g, ox, t) {
+  const x0 = Math.round(CAFE_X - ox), gx = x0 + 40, gw = 96, top = BASE - 62;
+  if (x0 > W + 30 || x0 + 150 < -30) return;
+  const WHITE = '#FBF8F2', SHADE = '#D6E2EA', GREEN = '#2F8A5A', GREEN_D = '#226B45', STONE = '#5E6472', STONE_D = '#454A58', TILE_B = '#2E6FC0';
+  g.fillStyle = 'rgba(30,60,90,.14)'; for (let k = 0; k < 6; k++) g.fillRect(gx - 4 - k * 2, BASE - 6 + k, 8, 1);             // a soft shadow on the sand, away from the sun
+  // chimney and terracotta roof
+  px(g, gx + 70, top - 20, 7, 12, WHITE); px(g, gx + 70, top - 20, 2, 12, SHADE); px(g, gx + 69, top - 22, 9, 2, STONE);
+  for (let r = 0; r < 10; r++) { const half = Math.round(gw / 2 - 16 + r * 2.2), cx = gx + gw / 2;
+    px(g, cx - half, top - 10 + r, half * 2, 1, r === 0 ? '#A8442A' : r % 3 === 0 ? '#C4542E' : '#E0683C'); }
+  // white walls, shaded on the side away from the sun, basalt corner stones and plinth, a band of azulejo tiles
+  px(g, gx, top, gw, BASE - top, WHITE); px(g, gx, top, 5, BASE - top, SHADE); px(g, gx, top, gw, 2, SHADE);
+  for (let y = top + 10; y < BASE - 6; y += 8) { px(g, gx, y, 4, 4, STONE); px(g, gx + gw - 4, y, 4, 4, STONE); }
+  px(g, gx, BASE - 6, gw, 6, STONE); px(g, gx, BASE - 6, gw, 1, '#7A808C');
+  px(g, gx, top + 3, gw, 1, TILE_B); px(g, gx, top + 8, gw, 1, TILE_B);
+  for (let x = gx + 1; x < gx + gw - 3; x += 5) { px(g, x, top + 4, 4, 4, '#E8F0FA'); px(g, x + 1, top + 5, 2, 2, TILE_B); }
+  // the window: basalt frame, open green shutters, a warm room with a counter; a green awning and the name above
+  const wx = gx + 14, wy = BASE - 27, ww = 40, wh = 20;
+  text2(g, 'CAFE', wx + (ww - 30) / 2, top + 13, GREEN);
+  px(g, wx - 2, wy - 2, ww + 4, wh + 2, STONE); px(g, wx, wy, ww, wh, '#FFD08A'); px(g, wx, wy, ww, 3, '#F2B870');
+  px(g, wx, wy + 13, ww, 7, '#8A5A3C'); px(g, wx, wy + 13, ww, 1, '#A8744E'); px(g, wx + 5, wy + 6, 9, 7, '#5E6472'); px(g, wx + 26, wy + 9, 3, 4, WHITE); px(g, wx + 31, wy + 9, 3, 4, WHITE);
+  [wx - 9, wx + ww + 3].forEach(sx => { px(g, sx, wy - 2, 6, wh + 2, GREEN); for (let y = wy; y < wy + wh; y += 3) px(g, sx + 1, y, 4, 1, GREEN_D); });
+  for (let k = 0; k < 5; k++) px(g, wx - 4 - k, wy - 8 + k, ww + 8 + k * 2, 1, k === 4 ? GREEN_D : GREEN);
+  for (let x = wx - 8; x < wx + ww + 8; x += 6) px(g, x + 1, wy - 3, 4, 1, GREEN_D);
+  // the arched green door in a basalt frame
+  const dx = gx + 68, dy = BASE - 38, arch = [5, 3, 2, 1, 1, 0];
+  arch.forEach((n, r) => { px(g, dx - 2 + n, dy - 2 + r, 18 - n * 2, 1, STONE); px(g, dx + n, dy + r, 14 - n * 2, 1, GREEN); });
+  px(g, dx - 2, dy + 4, 18, BASE - dy - 4, STONE); px(g, dx, dy + 4, 14, BASE - dy - 4, GREEN);
+  px(g, dx + 6, dy + 2, 2, BASE - dy - 2, GREEN_D); px(g, dx + 2, dy + 8, 3, 10, GREEN_D); px(g, dx + 9, dy + 8, 3, 10, GREEN_D); px(g, dx + 10, dy + 22, 2, 2, '#F2D27A');
+  // a coral surfboard against the wall
+  const sx = gx + gw + 1;
+  px(g, sx + 1, BASE - 36, 4, 2, '#FF7A5A'); px(g, sx, BASE - 34, 6, 33, '#FF7A5A'); px(g, sx, BASE - 34, 1, 33, '#E0603E'); px(g, sx + 3, BASE - 35, 1, 34, WHITE);
+  // the terrace: a café table with the laptop and a coffee, under a green parasol
+  px(g, x0 - 2, BASE - 12, 22, 2, WHITE); px(g, x0 - 2, BASE - 10, 22, 1, SHADE);
+  px(g, x0 + 5, BASE - 9, 2, 8, STONE); px(g, x0 + 2, BASE - 1, 8, 1, STONE);
+  px(g, x0 + 1, BASE - 13, 11, 1, '#C9CED8'); px(g, x0 + 2, BASE - 21, 10, 8, '#2B3550'); px(g, x0 + 3, BASE - 20, 8, 6, '#F4F4F2');
+  px(g, x0 + 4, BASE - 19, 6, 1, '#E8514A'); px(g, x0 + 4, BASE - 17, 3, 2, '#3FB59A'); px(g, x0 + 8, BASE - 17, 2, 2, '#F2B33C');
+  px(g, x0 + 13, BASE - 16, 3, 4, '#FFFFFF'); px(g, x0 + 13, BASE - 15, 3, 1, '#8A5A3C');
+  const cx = x0 + 17;
+  px(g, cx, BASE - 44, 1, 42, WHITE); px(g, cx - 3, BASE - 2, 7, 2, STONE);
+  for (let r = 0; r < 8; r++) { const half = Math.round(3 + r * 2.7); px(g, cx - half, BASE - 51 + r, half * 2 + 1, 1, r < 2 ? '#3FA06A' : GREEN); px(g, cx - half, BASE - 51 + r, 2, 1, GREEN_D); }
+  for (let k = 0; k < 6; k++) px(g, cx - 22 + k * 7 + 2, BASE - 43, 3, 1, GREEN_D);
+  px(g, cx, BASE - 53, 1, 2, WHITE);
+}
+
+/* from the beach into the city: a road tunnel through the mountain, Madeira style */
+const mix = (a, b, k) => { const p = hex(a), q = hex(b); return `rgb(${p.map((v, i) => Math.round(v + (q[i] - v) * k)).join(',')})`; };
+const TUNNELS = [[TUN_A, TUN_B, ['#3E9A5A', '#64BC6A']], [TUN2_A, TUN2_B, ['#4E7E56', '#6E9E5A']]];   // the beach into the city, the city out to the view
+const tunTop = X => { for (const [A, B] of TUNNELS) { const d = Math.min(X - (A - 70), B + 70 - X); if (d > 0) return Math.round(BASE - 30 - Math.min(d, 100) * 1.9); } return null; };
+const inRock = (X, y) => { const top = tunTop(X); return top !== null && y > top && y < BASE; };
+function tunnel(g, ox, night, [TA, TB, day]) {
+  const a = TA - ox, b = TB - ox;
+  if (a > W + 80 || b < -80) return;
+  const C = [...day, '#454A58', '#5E6472'].map((c, i) => mix(c, ['#1A2436', '#263248', '#121622', '#1E2432'][i], night));   // green by day, dark by night
+  for (let sx = Math.max(0, Math.floor(a - 70)); sx < Math.min(W, Math.ceil(b + 70)); sx++) {
+    const X = Math.round(sx + ox), top = tunTop(X); if (top === null) continue;
+    const inside = X >= TA && X < TB;
+    px(g, sx, top, 1, BASE - top, C[0]); px(g, sx, top, 1, 3, C[1]);                                 // the mountain, lit along its edge
+    for (let y = top + 10 - ((top + 400) % 10); y < BASE - 58; y += 10) if (y > top + 4 && (X + y * 3) % 46 < 30) px(g, sx, y, 1, 1, C[1]);   // terraces on the slope
+    [[-42, 14, 7], [-30, 30, 5], [34, 20, 6], [52, 44, 5]].forEach(([dx, dy, r0], i) => {               // round bushes near the portals
+      const bx = (dx < 0 ? TA : TB) + dx, by = tunTop(bx); if (by === null) return; const ex = X - bx, ey2 = r0 * r0 - ex * ex;
+      if (ey2 > 0) { const hh = Math.round(Math.sqrt(ey2) * .8); px(g, sx, by + dy - hh, 1, hh * 2, C[1]); px(g, sx, by + dy + Math.round(hh * .4), 1, Math.max(0, Math.round(hh * .6)), C[0]); } });
+    px(g, sx, Math.max(top, BASE - 54), 1, BASE - Math.max(top, BASE - 54), C[2]); px(g, sx, Math.max(top, BASE - 54), 1, 1, C[3]);   // basalt where the road cuts in
+    if (!inside) continue;
+    px(g, sx, BASE - 46, 1, 46, '#23222C'); px(g, sx, BASE - 46, 1, 6, '#3A3A46');                  // the tunnel, cut away
+    px(g, sx, BASE - 12, 1, 2, '#E8B84A');
+    if ((X - TA) % 32 < 4) px(g, sx, BASE - 40, 1, 2, '#FFD08A');
+  }
+  [a - 4, b].forEach(x => { px(g, x, BASE - 50, 4, 50, '#8A8E98'); px(g, x, BASE - 50, 4, 1, '#AEB2BC'); });   // stone portals
+}
+
+/* the finale: the road ends at a view: a snow-capped mountain over a lake, golden grass, blossoming trees */
+function paintVistaSky() {                                        // dithered like scene 1's sky, in clear morning blues
+  const L = layer(W, H), stops = ['#3E6EB8', '#4A7EC6', '#5A8ED0', '#6E9ED8', '#86B0E0', '#A2C4E8', '#BCD6EE'];
+  for (let y = 0; y < H; y++) { const f = Math.min(1, y / 128) * (stops.length - 1), i = Math.min(stops.length - 2, f | 0);
+    for (let x = 0; x < W; x++) L.set(x, y, dith(x, y, f - i) ? stops[i + 1] : stops[i]); }
+  return L.done();
+}
+function paintVistaLand() {                                       // in screen space, so the car stops right in front of the peak
+  const L = layer(W, 170), mx = W / 2, HAZE = hex('#A8BCE0');
+  const prof = x => { const d = Math.max(0, Math.abs(x - mx) - 8) / 250; return d >= 1 ? 999 : 128 - 100 * (1 - d) ** 2.2; };
+  const ridge = y => mx + Math.round(Math.sin(y * .12) * 3 + (y - 28) * .1);
+  const heroAt = (x, y) => { const top = prof(x); if (y < top || y > 127) return null;
+    const lit = x >= ridge(y), d = y - top, n = Math.sin(x * .9) * .5 + Math.sin(x * .37 + 1) * .8, g0 = Math.sin(x * .55 + .7) + Math.sin(x * .17) * .6 > 1.05;
+    const snow0 = 58 + 7 * Math.abs(Math.sin(x * .29)) + 4 * Math.sin(x * .13) + n * 2, gully = g0 && y < snow0 + 14, snow = snow0 + (g0 ? 9 : 0);
+    let c = y < snow ? (lit ? (d < 3 ? '#FFF6EE' : gully ? '#F2D8CC' : '#FBE6DA') : (gully ? '#C4C6E2' : '#D4D6EC'))
+                     : (lit ? (d < 4 ? '#F0C4AC' : gully ? '#D09A8C' : '#E2AE9A') : (gully ? '#6E72AA' : '#8286BC'));
+    const k = hex(c), m = Math.max(0, Math.min(.6, ((y - 28) / 100 - .55) * 1.3));                                   // haze at the foot, like scene 1's ranges
+    return k.map((v, i) => Math.round(v + (HAZE[i] - v) * m)); };
+  for (let y = 0; y < 128; y++) for (let x = 0; x < W; x++) { const c = heroAt(x, y); if (c) L.set(x, y, c); }
+  for (let k = 0; k < 70; k++) { const tx = k * 5.6 + (k * 37 % 4) | 0, th = 7 + (k * 13 % 7), olive = k % 5 === 2;                 // pines along the far shore
+    for (let j = 0; j < th; j++) { const half = Math.round((th - j) * .32 + (j % 3 === 0 ? .6 : 0)); for (let xx = -half; xx <= half; xx++) L.set(tx + xx, 126 - j, xx > half * .3 ? (olive ? '#6E8A3E' : '#2E5A4A') : (olive ? '#9AAE52' : '#4E7E56')); } }
+  for (let x = 0; x < W; x++) { L.set(x, 127, '#3E6E4E'); }
+  const water = ['#A8CCEA', '#98C2E6', '#88B6E0', '#7AAAD8'];
+  for (let y = 128; y < 170; y++) { const f = Math.min(2.99, (y - 128) / 8), i = f | 0;                                  // the lake, the mountain softly mirrored in it
+    for (let x = 0; x < W; x++) { let p = hex(dith(x, y, f - i) ? water[i + 1] : water[i]); const m = heroAt(x, Math.round(127 - (y - 128) * 1.8));
+      if (m && (y - 128) % 4 !== 3) p = p.map((v, j) => Math.round(v + (m[j] - v) * .22));
+      L.set(x, y, p); } }
+  return L.done();
+}
+function paintForeC(base, blade, flowers) {                       // scene 1's foreground grass, in any palette
+  const L = layer(TILE, 22), r = rng(91);
+  for (let y = 0; y < 22; y++) for (let x = 0; x < TILE; x++) L.set(x, y, dith(x, y, y / 22) ? base[0] : base[1]);
+  for (let i = 0; i < 700; i++) { const x = r() * TILE | 0, y = r() * 20 | 0; L.set(x, y, blade); L.set(x, y - 1, blade); }
+  for (let i = 0; i < 260; i++) { const x = r() * TILE | 0, y = 2 + r() * 18 | 0, c = r() < .55 ? flowers[0] : r() < .6 ? flowers[1] : flowers[2];
+    L.set(x, y, c); if (r() < .4) L.set(x + 1, y, c); }
+  return L.done();
+}
+function blossom(g, x, h, dir) {                                   // a cherry tree in bloom: a leaning trunk and one soft canopy, lit from the sun's side
+  for (let y = 0; y < h; y++) { const f = y / h, tx = x + Math.round(dir * f * f * 20), w0 = y < 14 ? 7 : y < h * .6 ? 5 : 4; px(g, tx, BASE - y, w0, 1, '#5A3A3E'); px(g, tx + (dir > 0 ? 0 : w0 - 1), BASE - y, 1, 1, '#3E2830'); }
+  const cx = x + dir * 22, cy = BASE - h - 4, r = rng(dir > 0 ? 701 : 702), lobes = [];
+  for (let k = 0; k < 30; k++) { const a0 = r() * Math.PI * 2, d = Math.sqrt(r()); lobes.push([cx + Math.cos(a0) * d * 40, cy + Math.sin(a0) * d * 18, 8 + r() * 6]); }
+  lobes.sort((p, q) => p[1] - q[1]);                                                                                   // back to front, so each cluster overlaps the one above it
+  for (const [lx, ly, rr] of lobes) for (let y = -rr; y <= rr; y++) { const half = Math.round(Math.sqrt(rr * rr - y * y));
+    for (let xx = -half; xx <= half; xx++) { const sun = (lx + xx - cx) / 46 * .8 - (ly + y - cy) / 26 * .6;
+      px(g, Math.round(lx + xx), Math.round(ly + y), 1, 1, y > rr * .45 ? '#D888B2' : y < -rr * .35 && xx * .6 - y > rr * .2 + (sun < 0 ? rr * .3 : 0) ? '#FFD3E4' : '#F2A8C8'); } }
+  for (let k = 0; k < 3; k++) { const bx = cx + (k - 1) * 20 * dir, by = cy + 18 + (k % 2) * 3; px(g, Math.round(bx), by, 4, 2, '#5A3A3E'); }      // branches showing under the bloom
+}
+const PETALS = (r => Array.from({ length: 28 }, () => [r() * W, r() * H, 10 + r() * 10, r() * 6]))(rng(613));
+function vista(g, ox, t) {
+  const x0 = Math.round(VIEW_OX - ox);
+  if (x0 > W + 80 || x0 < -W - 80) return;
+  blossom(g, x0 + 6, 112, 1); blossom(g, x0 + 372, 104, -1);
+  [[x0 + 300, 150, '#FF9A3C', 0], [x0 + 90, 156, '#FFD84A', 2]].forEach(([bx, by, c, p]) => {                       // butterflies
+    const x = Math.round(bx + Math.sin(t * .7 + p) * 30), y = Math.round(by + Math.sin(t * 1.3 + p) * 6), open = ((t * 10) | 0) % 2;
+    px(g, x, y, 1, 2, '#3A2A2A'); px(g, x - (open ? 2 : 1), y - (open ? 1 : 0), open ? 2 : 1, 2, c); px(g, x + 1, y - (open ? 1 : 0), open ? 2 : 1, 2, c); });
+}
+function petals(g, t, ox) { for (const [x0, y0, v, p] of PETALS) { const x = ((x0 + t * v + Math.sin(t + p) * 6) % W + W) % W, y = (y0 + t * v * .6) % (BASE + 26); if (inRock(Math.round(x + ox), y)) continue;
+  px(g, x, y, 2, 1, '#F8C0D8'); px(g, x + 1, y + 1, 1, 1, '#FFE0EC'); } }
+
+/* the persona: you, seen from behind, looking at the view */
+const ME = (() => { const c = document.createElement('canvas'); c.width = 18; c.height = 30; return c; })();
+function drawMe(t, step = 0) { const g = ME.getContext('2d'), sway = Math.round(Math.sin(t * 1.6)), W0 = '#9E1B32', SH = '#741226', BL = '#F4F4F2', BK = '#1A1B20';
+  g.clearRect(0, 0, 18, 30);
+  const lu = step > 0 ? 1 : 0, ru = step < 0 ? 1 : 0;                                                                  // one foot lifts at a time while walking
+  px(g, 3, 27 - lu, 3, 3, BK); px(g, 8, 27 - ru, 3, 3, BK);                                                                       // racing boots
+  px(g, 3, 17, 3, 10 - lu, W0); px(g, 8, 17, 3, 10 - ru, W0); px(g, 5, 17, 1, 10 - lu, SH); px(g, 8, 17, 1, 10 - ru, SH);   // suit legs
+  px(g, 2, 6, 10, 12, W0); px(g, 10, 6, 2, 12, SH);   // the racing suit, all cherry
+  px(g, 1, 8, 1, 8, W0); px(g, 12, 8, 1, 8, SH); px(g, 1, 16, 1, 2, BK); px(g, 12, 16, 1, 2, BK);                       // arms, gloves
+  px(g, 12, 15, 5, 5, W0); px(g, 12, 16, 5, 2, BL); px(g, 16, 15, 1, 5, SH);                                            // the helmet in her hand
+  px(g, 4, 0, 6, 6, '#3A2620'); px(g, 3, 4, 8, 7, '#3A2620'); px(g, 3 + sway, 11, 8, 2, '#3A2620'); px(g, 5, 1, 2, 3, '#5A3A2E'); px(g, 4 + sway, 8, 1, 3, '#5A3A2E');   // long dark hair
+  return ME; }
+
+/* scene 5: the business center, painted once */
+const TOWER_IMG = (() => {
+  const w = 150, ox0 = 14, c = document.createElement('canvas'); c.width = w + 30; c.height = H;
+  const g = c.getContext('2d'), r = rng(5462);
+  for (let y = 0; y < BASE - 46; y++) for (let x = 0; x < w; x++) {
+    let col = (x % 6 === 0 || y % 5 === 0) ? '#0A0C20' : '#12163A';
+    if (((x + y * .6) | 0) % 46 < 2) col = '#1E2456';
+    if (y % 5 === 2 && x % 6 > 1 && x % 6 < 5 && r() < .22) col = r() < .7 ? '#7A8CE0' : '#C9A0E8';            // lit offices
+    g.fillStyle = col; g.fillRect(ox0 + x, y, 1, 1); }
+  px(g, ox0, 0, 2, BASE - 46, '#5A8CFF'); px(g, ox0 + w - 2, 0, 2, BASE - 46, '#FF6FA8');                       // neon edges
+  px(g, ox0 - 4, BASE - 46, w + 8, 20, '#07081A'); px(g, ox0 - 4, BASE - 46, w + 8, 1, '#FF6FA8'); px(g, ox0 - 4, BASE - 27, w + 8, 1, '#FF6FA8');
+  const tw = 'BUSINESS CENTER'.length * 8 - 2, tx = ox0 + (w - tw) / 2;
+  [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dx, dy]) => text2(g, 'BUSINESS CENTER', tx + dx, BASE - 41 + dy, '#8A2E62'));
+  text2(g, 'BUSINESS CENTER', tx, BASE - 41, '#FFD2E6');
+  px(g, ox0, BASE - 26, w, 26, '#D8D2F0'); for (let x = 0; x <= w; x += 15) px(g, ox0 + x, BASE - 26, 1, 26, '#1A1E30');      // warm lobby
+  px(g, ox0 + 20, BASE - 12, 24, 8, '#5A4A3A'); px(g, ox0 + 30, BASE - 18, 4, 6, '#2A2226');                                  // reception desk
+  px(g, ox0 + 62, BASE - 22, 26, 22, '#1A1E30'); px(g, ox0 + 64, BASE - 20, 22, 20, '#B8D4EE'); px(g, ox0 + 74, BASE - 20, 2, 20, '#1A1E30');
+  px(g, ox0 + 54, BASE - 26, 42, 3, '#0A0C16');                                                                              // canopy
+  return c;
+})();
+function tower(g, ox, t) {
+  const x0 = Math.round(TOWER_X - ox);
+  if (x0 > W + 30 || x0 + 160 < -30) return;
+  g.drawImage(TOWER_IMG, x0 - 14, 0);
+
+}
+
+function person(g, x, y, bob, c) {                                 // shared body: legs, shoes, torso, head
+  px(g, x - 3, y - 1, 15, 2, 'rgba(0,0,0,.28)');
+  px(g, x + 2, y - 7, 3, 7, c.legs); px(g, x + 6, y - 7, 3, 7, c.legs); px(g, x + 1, y - 1, 4, 1, c.shoes); px(g, x + 6, y - 1, 4, 1, c.shoes);
+  px(g, x + 1, y - 17 + bob, 9, 11, c.top); px(g, x + 8, y - 17 + bob, 2, 11, c.topShade);
+  px(g, x + 3, y - 22 + bob, 5, 5, c.skin); px(g, x + 6, y - 20 + bob, 1, 1, '#2B2833'); px(g, x + 5, y - 18 + bob, 2, 1, '#7A3B2E');
+}
+function wave(g, x, y, bob, t, waving, sleeve, shade, skin) {
+  const up = waving && ((t * 4) | 0) % 2;
+  if (waving) { px(g, x + 10, y - (up ? 25 : 21) + bob, 2, 7, sleeve); px(g, x + 10, y - (up ? 26 : 22) + bob, 2, 2, skin); }
+  else px(g, x + 10, y - 16 + bob, 2, 7, shade);
+}
+function founder(g, ox, t, waving) {                                // sitting at the folding table with a laptop
+  const x = Math.round(FOUNDER_X - ox), y = BASE - 3, bob = Math.round(Math.sin(t * 2 + 3) * .5);
+  if (x < -20 || x > W + 20) return null;
+  px(g, x - 2, BASE - 9, 12, 2, '#2E3A6E'); px(g, x - 2, BASE - 20, 2, 11, '#2E3A6E'); px(g, x - 1, BASE - 7, 1, 7, '#5A5A66'); px(g, x + 8, BASE - 7, 1, 7, '#5A5A66');   // a folding chair
+  px(g, x + 2, y - 4, 9, 3, '#2F3550'); px(g, x + 9, y - 4, 3, 6, '#2F3550'); px(g, x + 9, y + 1, 4, 1, '#F2F2F2');                       // legs, sneakers
+  px(g, x + 1, y - 15 + bob, 9, 11, '#F28C3A'); px(g, x + 8, y - 15 + bob, 2, 11, '#C86A26'); px(g, x + 4, y - 13 + bob, 3, 2, '#C86A26');   // orange hoodie
+  px(g, x + 3, y - 20 + bob, 5, 5, '#E7B38E'); px(g, x + 6, y - 18 + bob, 1, 1, '#2B2833'); px(g, x + 5, y - 16 + bob, 2, 1, '#7A3B2E');
+  px(g, x + 2, y - 23 + bob, 7, 3, '#5A3A2A'); px(g, x + 1, y - 22 + bob, 2, 3, '#5A3A2A'); px(g, x + 8, y - 24 + bob, 2, 2, '#5A3A2A');   // messy hair
+  const up = waving && ((t * 4) | 0) % 2;
+  if (waving) { px(g, x + 10, y - (up ? 23 : 19) + bob, 2, 7, '#F28C3A'); px(g, x + 10, y - (up ? 24 : 20) + bob, 2, 2, '#E7B38E'); }
+  else { px(g, x + 9, y - 11 + bob, 4, 2, '#F28C3A'); px(g, x + 12, y - 11 + bob, 1, 2, '#E7B38E'); }                                 // typing
+  return { x: x + 5, top: y - 25 + bob };
+}
+function guard(g, ox, t, waving) {
+  const x = Math.round(GUARD_X - ox), y = BASE + 2, bob = Math.round(Math.sin(t * 1.8 + 5));
+  if (x < -20 || x > W + 20) return null;
+  person(g, x, y, bob, { legs: '#2E3A2A', shoes: '#17141F', top: '#3E5038', topShade: '#2E3E2A', skin: '#E7B38E' });
+  px(g, x + 1, y - 13 + bob, 9, 1, '#2A2E2A'); px(g, x + 3, y - 16 + bob, 2, 1, '#F7D23E');                    // belt, badge
+  px(g, x + 2, y - 25 + bob, 7, 3, '#2E3E2A'); px(g, x + 7, y - 23 + bob, 3, 1, '#17141F'); px(g, x + 2, y - 23 + bob, 7, 1, '#1F4AA8');   // cap with a blue band
+  wave(g, x, y, bob, t, waving, '#3E5038', '#2E3E2A', '#E7B38E');
+  return { x: x + 5, top: y - 27 + bob };
+}
+function client(g, ox, t, waving) {
+  const x = Math.round(CLIENT_X - ox), y = BASE + 2, bob = Math.round(Math.sin(t * 2 + 4));
+  if (x < -20 || x > W + 20) return null;
+  const ux = x + 2, uy = y - 30 + bob;                                                                                         // an umbrella
+  for (let k = -11; k <= 11; k++) { const h = Math.round(Math.sqrt(121 - k * k) * .55);
+    for (let j = 0; j <= h; j++) px(g, ux + k, uy - j, 1, 1, j === h ? '#7A88D8' : (Math.abs(k) % 6 === 0 ? '#343A6A' : '#22264A')); }
+  for (let k = -11; k <= 11; k += 2) px(g, ux + k, uy + 1, 1, 1, '#22264A');
+  px(g, ux, uy - 8, 1, 2, '#9AA4DC'); px(g, ux, uy, 1, 14, '#9AA4DC'); px(g, ux - 1, uy + 13, 2, 1, '#9AA4DC');
+  person(g, x, y, bob, { legs: '#1A1E36', shoes: '#0A0A12', top: '#1E2440', topShade: '#161A30', skin: '#E7B38E' });                          // a dark suit
+  px(g, x + 4, y - 17 + bob, 3, 4, '#F4F4F2'); px(g, x + 5, y - 16 + bob, 1, 5, '#8A2E52');                                                  // shirt and tie
+  px(g, x + 3, y - 17 + bob, 1, 3, '#2A3050'); px(g, x + 7, y - 17 + bob, 1, 3, '#2A3050');                                                  // lapels
+  px(g, x - 1, y - 16 + bob, 3, 3, '#1E2440'); px(g, x + 1, y - 17 + bob, 1, 2, '#E7B38E');                                                   // the hand holding it
+  px(g, x - 8, y - 5, 7, 5, '#2A1E1A'); px(g, x - 6, y - 6, 3, 1, '#2A1E1A');                                                                // briefcase set down
+  px(g, x + 2, y - 25 + bob, 7, 2, '#2B2228'); px(g, x + 2, y - 23 + bob, 1, 2, '#2B2228');                                                 // short neat hair
+  wave(g, x, y, bob, t, waving, '#1E2440', '#161A30', '#E7B38E');
+  return { x: x + 4, top: y - 40 + bob };
+}
+
+/* The car: NN Racing #1, side view, facing right */
+function tyre(g, cx, cy, r, ang) {
+  for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) { const d = Math.hypot(x, y);
+    if (d <= r + .3) px(g, cx + x, cy + y, 1, 1, d > r - 1.2 ? '#101015' : d > r - 2.2 ? '#26262D' : d > 2.4 ? '#4A4D58' : '#8A8E9A'); }
+  for (let k = 0; k < 3; k++) { const a = ang + k * 2.094; px(g, cx + Math.round(Math.cos(a) * 2.6), cy + Math.round(Math.sin(a) * 2.6), 1, 1, '#B7BBC6'); }
+  px(g, cx + Math.round(Math.cos(ang) * (r - 1.6)), cy + Math.round(Math.sin(ang) * (r - 1.6)), 1, 1, '#F2C94C');
+}
+function car(g, x, y, ang, t, braking, empty) {
+  x = Math.round(x);
+  px(g, x - 2, y - 1, 70, 2, 'rgba(10,8,20,.32)');
+  // rear wing
+  px(g, x - 1, y - 21, 14, 2, '#121216'); px(g, x - 1, y - 21, 14, 1, '#34353F'); px(g, x - 1, y - 18, 13, 1, '#1E1F26');
+  px(g, x, y - 21, 2, 12, '#17171C'); px(g, x + 10, y - 18, 1, 8, '#17171C');
+  tyre(g, x + 13, y - 8, 8, ang);
+  // body, column by column from the engine cover to the nose
+  const prof = [[8,13,11],[14,19,12],[20,25,14],[26,31,16],[32,33,15],[34,40,11],[41,47,10],[48,53,9],[54,59,8]];
+  for (const [a, b, top] of prof) px(g, x + a, y - top, b - a + 1, top - 5, '#9E1B32');
+  px(g, x + 8, y - 11, 32, 1, '#C2334A');
+  px(g, x + 16, y - 6, 24, 1, '#741226'); px(g, x + 40, y - 6, 20, 1, '#741226');
+  px(g, x + 26, y - 16, 6, 1, '#C2334A'); px(g, x + 30, y - 15, 2, 2, '#1A1B20');                               // airbox intake
+  px(g, x + 14, y - 8, 26, 1, '#E6E2E4'); px(g, x + 40, y - 8, 19, 1, '#E6E2E4'); px(g, x + 14, y - 9, 26, 1, '#FFFFFF');  // blue stripe
+  text(g, '1', x + 21, y - 14, '#FFFFFF');
+  px(g, x + 6, y - 5, 54, 2, '#18181D');                                                                       // floor
+  // cockpit, driver, halo
+  px(g, x + 34, y - 12, 7, 2, '#1A1B20');
+  if (!empty) { px(g, x + 35, y - 15, 4, 4, '#9E1B32'); px(g, x + 36, y - 16, 2, 1, '#C2334A'); px(g, x + 37, y - 14, 2, 1, '#FFFFFF'); }
+  px(g, x + 33, y - 17, 8, 1, '#1A1B20'); px(g, x + 41, y - 16, 1, 2, '#1A1B20'); px(g, x + 42, y - 14, 1, 3, '#1A1B20');
+  px(g, x + 43, y - 12, 2, 1, '#1A1B20');                                                                      // mirror
+  tyre(g, x + 52, y - 7, 7, ang);
+  // front wing
+  px(g, x + 50, y - 3, 15, 2, '#121216'); px(g, x + 52, y - 4, 11, 1, '#34353F'); px(g, x + 63, y - 7, 2, 6, '#121216');
+  // rain light: blinks when the car is still
+  px(g, x + 3, y - 10, 2, 1, braking && ((t * 4) | 0) % 2 ? '#FF4D4D' : '#5A1D22');
+}
+
+/* ---------- state ---------- */
+const CAR_SCALE = 1.5, CARC = document.createElement('canvas'); CARC.width = 80; CARC.height = 30;
+const cg = CARC.getContext('2d'); cg.imageSmoothingEnabled = false;
+const FORE_NN = tinted(FORE_N, '#0A1218', .45);
+const WINTER_SKY = paintWinterSky(), SNOW_FOREST = paintSnowForest(), SNOW_FIELD = paintSnowField(), FORE_SNOW = paintForeSnow(), ROAD_W = tinted(ROAD, '#8A9AC8', .4);
+const FAR_W = paintRange(3, 150, 52, { base: '#4A5A8A', lit: '#7A8ABA', shade: '#3A4A78', snow: '#C9D6EE', snowLit: '#E6EEFA', haze: '#5A6A9A' }, 400);
+const NEAR_W = paintRange(9, 160, 62, { base: '#34446E', lit: '#5A6A9A', shade: '#2A385E', snow: '#B9C8E6', snowLit: '#DDE6F5', haze: '#46567E' }, 400);
+const MORNING_SKY = paintMorningSky(), MORNING_CLOUDS = paintClouds(['#FFFFFF', '#F4FAFD', '#DCEEF8', '#BCDCF0']), ISLAND_FAR = paintIsland(true), ISLAND = paintIsland(false);
+const OCEAN = paintOcean(), BEACH = paintBeach(false), FORE_COAST = paintBeach(true);
+const SURFERS = [[60, 141, 1, '#F2B33C', 0], [250, 135, 0, '#F4F4F2', 2], [470, 144, 1, '#E8514A', 4], [610, 138, 0, '#3FB59A', 1]];   // x, y, riding or paddling, board
+const CRESTS = (r => Array.from({ length: 56 }, () => { const y = 132 + (r() * 5 | 0) * 3; return [r() * W * 2, y, 6 + (y - 132) * .8 + r() * 8 | 0, r() * 6]; }))(rng(141));
+function surf(g, ox, t, [crest, wash, foam, trough]) {             // waves rolling in, and the surf washing up the sand
+  for (const [x, y, len, p] of CRESTS) { const f = .05 + (y - 128) * .02, sx = Math.round(((x - ox * f - t * 4) % (W * 2) + W * 2) % (W * 2) - W / 2), dy = Math.round(Math.sin(t * 1.1 + p) * .6);
+    px(g, sx + 1, y + dy + 1, len, 1, trough); px(g, sx, y + dy, len, 1, crest); }
+  const reach = Math.round(Math.sin(t * .9) * 2);
+  for (let x = 0; x < W; x++) { const e = 146 - reach + Math.round(Math.sin((x + ox * .55) * .07 + t * .6) * 1.5);
+    px(g, x, e, 1, 2, foam); px(g, x, e + 2, 1, 8, wash); }
+  SURFERS.forEach(([x, y, ride, board, p]) => { const f = .05 + (y - 128) * .02, sx = Math.round(((x - ox * f - t * (ride ? 9 : 2)) % (W * 2) + W * 2) % (W * 2) - W / 2), by = y + Math.round(Math.sin(t * 1.6 + p) * .7);
+    if (ride) { px(g, sx - 6, by + 1, 14, 1, foam); px(g, sx, by, 8, 1, board); px(g, sx + 2, by - 3, 1, 3, '#1E2230'); px(g, sx + 5, by - 3, 1, 3, '#1E2230');
+      px(g, sx + 2, by - 6, 4, 3, '#1E2230'); px(g, sx + 1, by - 6, 1, 1, '#1E2230'); px(g, sx + 6, by - 7, 1, 1, '#1E2230'); px(g, sx + 3, by - 8, 2, 2, '#E2A985'); }
+    else { px(g, sx, by, 8, 1, board); px(g, sx + 1, by - 1, 5, 1, '#1E2230'); px(g, sx + 6, by - 2, 2, 2, '#B07A52'); px(g, sx + 2 + Math.round(Math.sin(t * 4 + p)), by, 1, 1, '#1E2230'); } });
+}
+const STREET = paintStreet(), ENT_SKY = paintEntSky(), ENT_FAR = paintMegaCity(93, 'far'), ENT_MID = paintMegaCity(94, 'mid'), ENT_NEAR = paintMegaCity(95, 'near'), FOG = paintFog();
+const ROAD_ENT = tinted(ROAD, '#0A0C1A', .7), FORE_ENT = tinted(FORE, '#0A0C18', .82);
+const VISTA_SKY = paintVistaSky(), VISTA_LAND = paintVistaLand(), VISTA_CLOUDS = paintClouds(['#FFF8EE', '#FBE4CC', '#F2BE98', '#DE9C88']), MEADOW_GOLD = paintMeadow(['#8CB850', '#A8CC60', '#FFF6E6', '#E890C8']), FORE_VISTA = paintForeC(['#5E9040', '#6EA048'], '#94C058', ['#FFF6E6', '#E890C8', '#B890E8']);
+const RAIN = (r => Array.from({ length: 170 }, () => [r() * W, r() * H, 160 + r() * 90]))(rng(98));
+const SNOW = (r => Array.from({ length: 140 }, () => [r() * W, r() * H, 14 + r() * 22, r() * 6, r() < .3 ? 2 : 1]))(rng(99));
+const NEON_REFLECT = [['#5A8CFF', 8], ['#FF6FA8', 7], ['#9B6BFF', 10], ['#FF6FA8', 6]].map(([c, w], i) => paintStreak(c, w, 40 + i));
+const BG = document.createElement('canvas'); BG.width = W; BG.height = H; const bg = BG.getContext('2d'); bg.imageSmoothingEnabled = false;
+const END_X = FINAL_X - 160, VIEW_OX = FINAL_X - 135, MAX_FWD = 170, MAX_BACK = -70;
+let phase = 'title', carX = CAR_START, speed = 0, ang = 0, t0 = 0, last = performance.now(), dust = [], lineI = 0, whoAt = null, stopI = 0;
+const keys = { left: false, right: false };
+const STOPS = [
+  { x: CHEF_X, name: 'CHEF', greet: 'Hey, nice car! Wait... I know you.', draw: chef, lines: [
+    ['them', 'Hold on, are you the one who promoted all those famous restaurants in Ukraine?'],
+    ['me', 'Haha, yes. For 6 years, I helped people discover and fall in love with 10+ restaurants in Kyiv and other cities.'],
+    ['them', 'Did you always run the creative side?'],
+    ['me', 'From day one. Designers, photographers, copywriters, videographers. I led teams of up to 12.'],
+    ['them', 'And the strategy, budgets, press, events...'],
+    ['me', 'From brand manager to CMO, yes. And leading creative people is where I learned to think like a creative director.'],
+    ['them', 'Any awards along the way?'],
+    ['me', "Three I'm proud of, including international silver. The first Ukrainian restaurant ever to win it."],
+    ['them', "So what's the secret?"],
+    ['me', "People don't buy a dish. They buy how it makes them feel."]] },
+  { x: OWNER_X, name: 'RESTAURANT OWNER', greet: "Hi! The chef said you're the brand person?", draw: owner, lines: [
+    ['them', 'We open in a month. No name, no logo, no menus yet. Can you help?'],
+    ['me', 'Sure. My team and I have branded 15+ businesses, mostly restaurants.'],
+    ['them', 'Perfect! How do you work?'],
+    ['me', 'I lead the concept and the process. My team does the design.'],
+    ['them', 'Do you also do websites and apps?'],
+    ['me', "Not yet. But it's just a matter of time."],
+    ['them', "Then I'm booking you for our app. Right after the menus."]] },
+  { x: GUARD_X, name: 'BORDER GUARD', greet: 'Evening! Passport, please.', draw: guard, lines: [
+    ['them', 'Purpose of your visit?'],
+    ['me', 'A new life. The war started in my country.'],
+    ['them', 'And what will you do here?'],
+    ['me', "I recently helped a humanitarian fund launch its website, side by side with a UI/UX designer. That's where I got hooked."],
+    ['them', 'Hooked on what?'],
+    ['me', 'Product design. I want to build products, not just promote them.'],
+    ['them', 'Welcome to Europe. Good luck with the new career.']] },
+  { x: FOUNDER_X, name: 'FOUNDER', greet: 'Hi! You must be the designer. Coffee?', draw: founder, lines: [
+    ['them', "We're building tax software for digital nomads in Europe. Have you worked on anything this complex?"],
+    ['me', 'Yes. At a blockchain company I was the only designer on several complex products, working closely with the developers. We shipped fast.'],
+    ['them', "That's exactly what I'm looking for. I need a dashboard prototype in a few days. Can I count on you?"],
+    ['me', "Of course. Let's make taxes easier to understand, so people can get on with their lives."]] },
+  { x: CLIENT_X, name: 'CLIENT', greet: 'Good evening. A quick word?', draw: client, lines: [
+    ['them', "I've seen your work. Hard domains, and products people can actually use. That's what we need."],
+    ['me', "What's the project?"],
+    ['them', 'A Big 4 client. 12+ enterprise web apps, complex rules and very little room for mistakes.'],
+    ['me', "Complex B2B software is the kind of challenge I like. Let's see where I can bring the most value."],
+    ['them', 'Hiring approvals, secure documents, government contracts. And one design system to hold them together.'],
+    ['me', "Sounds challenging. I'm in."],
+    ['them', 'Welcome aboard.']] }
+];
+const ERAS = [['2012-2016', 'Alfred Nobel University · Marketing'], ['2016-2022', 'Restaurant marketing'], ['2019-2025', 'Creative director, freelance'], ['2022', 'Humanitarian fund · Moving to Europe'], ['2022-2023', 'Product designer · startups'], ['2023-2026', 'Product designer · B2B enterprise web applications'], ['2026', "What's next?"]];
+
+// The camera looks further ahead once you set off: the university fits at the start, the restaurant at the stop
+let finT0 = null, finFrom = 0, finK = 0;                            // the finale: when it started, where the car was, how far the camera has framed the view
+function camX() { const lead = 160 - Math.min(100, Math.max(0, carX - CAR_START) * .4), c = Math.max(0, carX - lead); return c + (VIEW_OX - c) * finK; }
+const carFront = () => carX + 66 * CAR_SCALE;
+const parkX = i => STOPS[i].x - 60 - 66 * CAR_SCALE;       // where the car stands to talk
+const whoOnScreen = () => whoAt && whoAt.x > -10 && whoAt.x < W + 10;
+
+function lookAt(ox) {
+  for (let i = 0; i < KEYS.length - 1; i++) { const [x0, a] = KEYS[i], [x1, b] = KEYS[i + 1];
+    if (ox < x1) return a === b ? [a, a, 0] : [a, b, Math.max(0, (ox - x0) / (x1 - x0))]; }
+  const last = KEYS[KEYS.length - 1][1]; return [last, last, 0];
+}
+const LOOKS = {
+  day:     (g, tile, t) => { g.drawImage(SKY, 0, 0); tile(CLOUDS, .04, 0, t * 2.5); tile(FAR, .08, 0); tile(NEAR, .16, 0); tile(FOREST, .3, 0); tile(MEADOW, .55, 0); },
+  dusk:    (g, tile) => { g.drawImage(DUSK_SKY, 0, 0); tile(FAR_N, .08, 0); tile(NEAR_N, .16, 0); tile(FOREST_N, .3, 0); tile(MEADOW_N, .55, 0); },
+  night:   (g, tile, t) => { g.drawImage(NIGHT_SKY, 0, 0); for (const [sx, sy, p] of STARS) if (Math.sin(t * 2.1 + p) > .3) px(g, sx, sy, 1, 1, '#FFFFFF');
+             tile(FAR_NN, .08, 0); tile(NEAR_NN, .16, 0); tile(FOREST_NN, .3, 0); tile(MEADOW_NN, .55, 0); },
+  winter:  (g, tile, t, ox) => { g.drawImage(WINTER_SKY, 0, 0); tile(FAR_W, .08, 0); tile(NEAR_W, .16, 0); tile(SNOW_FOREST, .3, 0); tile(SNOW_FIELD, .55, 0);
+             ANIMALS.forEach(([kind, ax, ay, roam, pace]) => { const ph = t * pace, dir = Math.cos(ph) >= 0 ? 1 : -1;
+               const sx = Math.round(ax + Math.sin(ph) * roam - ox * .55); if (sx > -20 && sx < W + 20) animal(g, kind, sx, ay, t, dir); }); },
+  enterprise: (g, tile, t) => { g.drawImage(ENT_SKY, 0, 0); tile(ENT_FAR, .1, 0);
+             [[60, 9, 0], [44, -14, 140], [82, 6, 260]].forEach(([y, v, o]) => { const x = (((t * v + o) % (W + 60)) + W + 60) % (W + 60) - 30, d = Math.sign(v);   // flying cars
+               for (let k = 1; k < 10; k++) px(g, x - d * (k + 4), y + 1, 1, 1, `rgba(255,111,168,${.45 - k * .045})`);
+               px(g, x - 4, y, 9, 2, '#2A2E4A'); px(g, x - 2, y - 1, 5, 1, '#3A3E5E'); px(g, x + d * 4, y, 1, 1, '#FFFFFF'); px(g, x - d * 4, y + 1, 1, 1, '#FF6FA8'); });
+             tile(ENT_MID, .3, 0); g.drawImage(FOG, 0, 0); tile(STREET, .6, 0); },
+  coast:   (g, tile, t, ox) => { g.drawImage(MORNING_SKY, 0, 0); tile(MORNING_CLOUDS, .04, 0, t * 2.5); tile(ISLAND_FAR, .04, 0); tile(ISLAND, .08, 0); g.drawImage(OCEAN, 0, 0); surf(g, ox, t, ['#FFFFFF', '#7FDCD6', '#FFFFFF', '#2768A6']); tile(BEACH, .55, 0); },
+  vista:   (g, tile, t) => { g.drawImage(VISTA_SKY, 0, 0); tile(VISTA_CLOUDS, .04, 0, t * 2); g.drawImage(VISTA_LAND, 0, 0); tile(MEADOW_GOLD, .6, 0); }
+};
+const GROUND = { day: [ROAD, FORE], dusk: [ROAD_N, FORE_N], night: [ROAD_NN, FORE_NN], winter: [ROAD_W, FORE_SNOW], coast: [ROAD, FORE_COAST], enterprise: [ROAD_ENT, FORE_ENT], vista: [ROAD, FORE_VISTA] };
+const CAR_TINT = { day: 0, dusk: .28, night: .3, winter: .3, coast: 0, enterprise: .22, vista: 0 };
+
+function drawWorld(now) {
+  const t = now / 1000, ox = camX(), [A, B, k] = lookAt(ox), w = n => (A === n ? 1 - k : 0) + (B === n ? k : 0);
+  const tileOn = g => (img, f, y, drift = 0) => { const o = ((ox * f + drift) % TILE + TILE) % TILE; g.drawImage(img, -o, y); g.drawImage(img, TILE - o, y); };
+  const tile = tileOn(ctx);
+  const lit = (a, fn) => { if (a > 0) { ctx.globalAlpha = Math.min(1, a); fn(); ctx.globalAlpha = 1; } };
+  LOOKS[A](ctx, tile, t, ox);
+  if (k > 0) { LOOKS[B](bg, tileOn(bg), t, ox); lit(k, () => ctx.drawImage(BG, 0, 0)); }      // crossfade into the next look
+  lit(w('dusk') + w('night') * .4, () => FIREFLIES.forEach(([fx, fy, p, f]) => { const b = Math.sin(t * 2 * f + p); if (b < .1) return;
+    const sx = Math.round(fx - ox * .8 + Math.sin(t * .7 + p) * 3), sy = Math.round(fy + Math.cos(t * .9 + p) * 2);
+    if (sx < 0 || sx > W) return; px(ctx, sx, sy, 1, 1, b > .7 ? '#FFF3A6' : '#C9B860'); }));
+  university(ctx, ox);
+  for (let lx = 360; lx < REST_X - 40; lx += 150) lamp(ctx, lx - ox);
+  restaurant(ctx, ox, t);
+  opening(ctx, ox, t, w('dusk') + w('night'));
+  border(ctx, ox, t);
+  lit(w('coast'), () => camp(ctx, ox, t));
+  cafe(ctx, ox, t);
+  tunnel(ctx, ox, 1 - w('coast'), TUNNELS[0]);
+  tunnel(ctx, ox, 1 - w('vista'), TUNNELS[1]);
+  lit(w('vista'), () => vista(ctx, ox, t));
+  tower(ctx, ox, t);
+  whoAt = null;
+  STOPS.forEach((st, i) => { const at = st.draw(ctx, ox, t, i >= stopI && !(phase === 'talk' && i === stopI)); if (i === stopI) whoAt = at; });
+  let lights = 0;
+  if (phase === 'lights') { const e = (now - t0) / 1000; lights = e < 2.6 ? Math.min(5, 1 + (e / .5 | 0)) : 0; }
+  startLights(ctx, ox, lights);
+  tile(GROUND[A][0], 1, BASE); lit(k, () => tile(GROUND[B][0], 1, BASE));
+  lit(w('enterprise') * .7, () => NEON_REFLECT.forEach((img, i) => { const sx = Math.round(TOWER_X - 160 + i * 90 - ox - img.width / 2); if (sx > -20 && sx < W) ctx.drawImage(img, sx, BASE + 8); }));
+  dust = dust.filter(d => (d.life -= 1 / 60) > 0);
+  dust.forEach(d => { d.x -= .3; d.y -= .12; ctx.fillStyle = `rgba(214,205,191,${d.life})`; ctx.fillRect(Math.round(d.x - ox), Math.round(d.y), 2, 2); });
+  cg.clearRect(0, 0, CARC.width, CARC.height);
+  const pt = finT0 === null ? -1 : (now - finT0) / 1000, cs = Math.round(carX - ox - 4 * CAR_SCALE);
+  car(cg, 4, 26, ang, t, Math.abs(speed) < 5, pt > 2);
+  const tint = CAR_TINT[A] * (1 - k) + CAR_TINT[B] * k;
+  if (tint > 0) { cg.globalCompositeOperation = 'source-atop'; cg.globalAlpha = tint; cg.fillStyle = '#2E2E66';
+    cg.fillRect(0, 0, CARC.width, CARC.height); cg.globalAlpha = 1; cg.globalCompositeOperation = 'source-over'; }
+  const ease = k => k <= 0 ? 0 : k >= 1 ? 1 : k * k * (3 - 2 * k), seg = (a0, a1) => ease((pt - a0) / (a1 - a0));
+  const me = (x, feet, step) => ctx.drawImage(drawMe(t, step), Math.round(x), Math.round(feet - 45), 27, 45);
+  if (pt > 2) { const up = seg(2, 2.6), down = seg(2.6, 3.4);                                                       // she climbs out and steps down by the front wheel
+    me(cs + 48 + 38 * down, BASE + 30 - 12 * up + 8 * down - Math.sin(down * Math.PI) * 2); }
+  ctx.drawImage(CARC, cs, Math.round(BASE + 27 - 26 * CAR_SCALE), CARC.width * CAR_SCALE, CARC.height * CAR_SCALE);
+  tile(GROUND[A][1], 1.25, H - 22); lit(k, () => tile(GROUND[B][1], 1.25, H - 22));
+  lit(w('vista'), () => petals(ctx, t, ox));
+  lit(w('enterprise') * .55, () => RAIN.forEach(([x, y, v]) => {                               // rain
+    const sy = (y + t * v) % H, sx = (((x - ox * 1.1 - sy * .3) % W) + W) % W;
+    if (inRock(Math.round(sx + ox), sy)) return;                                                // no rain inside the mountain
+    for (let k = 0; k < 5; k++) px(ctx, sx - k * .3, sy - k, 1, 1, '#9AA4DC'); }));
+  lit(Math.max(w('winter'), w('night') * .7), () => SNOW.forEach(([x, y, v, p, sz]) => {      // snowfall, starting already in the night
+    const sy = (y + t * v) % H, sx = (((x - ox * 1.1 + Math.sin(t * .8 + p) * 6) % W) + W) % W; px(ctx, sx, sy, sz, sz, '#F2F6FF'); }));
+}
+
+function step(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (phase === 'lights' && (now - t0) / 1000 > 3) { phase = 'free'; show('pad', 'flex'); show('drivehint', 'block'); }
+  if (phase === 'free') {
+    const dir = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+    if (dir) { speed += dir * (Math.sign(speed) === -dir ? 320 : 170) * dt; if (keys.right || keys.left) hide('drivehint'); }
+    else speed -= Math.sign(speed) * Math.min(Math.abs(speed), 110 * dt);   // rolls to a stop
+    speed = Math.max(MAX_BACK, Math.min(MAX_FWD, speed));
+    carX += speed * dt;
+    if (carX < 0) { carX = 0; speed = 0; }
+    if (stopI < STOPS.length && carX > parkX(stopI)) { carX = parkX(stopI); speed = 0; }      // the next person waves you down
+    if (dir > 0 && speed > 15 && Math.random() < .5) dust.push({ x: carX + 8, y: BASE + 24, life: .8 });
+    if (carX > END_X) { phase = 'finish'; t0 = now; finT0 = now; finFrom = carX; keys.left = keys.right = false; hide('pad'); hide('drivehint'); }
+    hud(era());
+  }
+  if (phase === 'finish') {                                      // the road ends at the view: glide to the middle, climb out, then the last card
+    const ft = (now - finT0) / 1000, k = Math.min(1, ft / 2.4), e = 1 - (1 - k) ** 3, before = carX;
+    carX = finFrom + (FINAL_X - finFrom) * e; speed = (carX - before) / Math.max(dt, .001); finK = e;
+    if (ft > 4.4) { phase = 'end'; show('end', 'grid'); }
+  }
+  if (phase === 'park') {                                        // glide to the spot beside them
+    const p = parkX(stopI), before = carX; carX += (p - carX) * Math.min(1, dt * 3.2); speed = (carX - before) / Math.max(dt, .001);
+    if (Math.abs(p - carX) < .5) { carX = p; speed = 0; beginTalk(); }
+  }
+  barrier += ((stopI > 2 ? 1 : 0) - barrier) * Math.min(1, dt * 2);
+  ang += speed * dt / 7;
+  drawWorld(now);
+  placeUi();
+  requestAnimationFrame(step);
+}
+
+function show(id, d) { $(id).style.display = d; }
+function hide(id) { $(id).style.display = 'none'; }
+const era = () => carX > 4900 ? 6 : carX > 3900 ? 5 : carX > 2950 ? 4 : carX > 2050 ? 3 : carX > 1000 ? 2 : carX > 400 ? 1 : 0;
+function hud(era) { $('hudYears').textContent = ERAS[era][0]; $('hudTitle').textContent = ERAS[era][1]; }
+
+function place(el, ax, ay, frac) {                             // ax, ay in scene pixels
+  const fw = $('frame').clientWidth, sc = fw / W, w = el.offsetWidth, h = el.offsetHeight;
+  const left = Math.max(8, Math.min(fw - w - 8, ax * sc - w * frac));
+  el.style.left = left + 'px'; el.style.top = Math.max(8, ay * sc - h - 14) + 'px';
+  el.style.setProperty('--tail', Math.max(14, Math.min(w - 14, ax * sc - left)) + 'px');
+}
+function placeUi() {
+  const canMeet = phase === 'free' && stopI < STOPS.length && whoOnScreen();
+  $('meet').style.display = canMeet ? 'block' : 'none';
+  $('meethint').style.display = canMeet ? 'block' : 'none';
+  if (canMeet) hide('drivehint');
+  $('frame').classList.toggle('meetable', canMeet);
+  if (!whoAt) return;
+  if (canMeet) { $('greetName').textContent = STOPS[stopI].name; $('meet').querySelector('span').textContent = STOPS[stopI].greet;
+    place($('meet'), whoAt.x, whoAt.top, .3); }
+  if ($('bThem').style.display === 'block') place($('bThem'), whoAt.x, whoAt.top, .3);
+  if ($('bMe').style.display === 'block') place($('bMe'), carX - camX() + 36 * CAR_SCALE, BASE + 27 - 24 * CAR_SCALE, .6);
+}
+
+function showLine() {
+  const [who, s] = STOPS[stopI].lines[lineI], el = $(who === 'me' ? 'bMe' : 'bThem');
+  hide('bThem'); hide('bMe');
+  if (who !== 'me') { const b = el.querySelector('b'); b.textContent = STOPS[stopI].name; b.style.color = '#FF9FB8'; }
+  el.querySelector('span').textContent = s; el.style.display = 'block'; placeUi();
+}
+function startTalk() { if (phase !== 'free') return; phase = 'park'; keys.left = keys.right = false; hide('meet'); hide('pad'); hide('drivehint'); }
+function beginTalk() { phase = 'talk'; speed = 0; lineI = 0; showLine(); show('catch', 'block'); show('hint', 'block'); }
+function nextLine() {
+  if (phase !== 'talk') return;
+  if (++lineI >= STOPS[stopI].lines.length) { ['catch', 'hint', 'bThem', 'bMe'].forEach(hide); stopI++; phase = 'free'; show('pad', 'flex'); show('drivehint', 'block'); return; }
+  showLine();
+}
+
+/* keyboard and on-screen arrows */
+const setKey = (k, v) => { keys[k] = v; };
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { setKey('right', true); e.preventDefault(); }
+  if (e.key === 'ArrowLeft') { setKey('left', true); e.preventDefault(); }
+  if ((e.key === 'Enter' || e.key === ' ') && phase === 'talk') { nextLine(); e.preventDefault(); }
+  else if ((e.key === 'Enter' || e.key === ' ') && $('meet').style.display === 'block') { startTalk(); e.preventDefault(); }
+});
+addEventListener('keyup', e => { if (e.key === 'ArrowRight') setKey('right', false); if (e.key === 'ArrowLeft') setKey('left', false); });
+[['padL', 'left'], ['padR', 'right']].forEach(([id, k]) => {
+  const b = $(id);
+  b.addEventListener('pointerdown', e => { e.preventDefault(); setKey(k, true); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => setKey(k, false)));
+});
+
+$('play').onclick = () => { hide('title'); show('hud', 'block'); phase = 'lights'; t0 = performance.now(); };
+$('meet').onclick = startTalk;
+const fitTop = () => $('frame').style.setProperty('--skipR', $('skip').offsetWidth + 22 + 'px');
+addEventListener('resize', fitTop); document.fonts.ready.then(fitTop); fitTop();
+$('frame').addEventListener('click', e => { if ($('meet').style.display === 'block' && !e.target.closest('button, a, .radio, .toast')) startTalk(); });
+$('catch').onclick = nextLine;
+$('skip').onclick = () => { ['title', 'catch', 'hint', 'bThem', 'bMe', 'meet', 'pad', 'drivehint'].forEach(hide); phase = 'end'; show('end', 'grid'); };
+$('again').onclick = () => { hide('end'); finT0 = null; finK = 0; carX = CAR_START; speed = 0; stopI = 0; hud(0); phase = 'lights'; t0 = performance.now(); };
+
+// for review: 'far', 'stop', 'talk' for the chef; 'stop2'...'stop5', 'talk2'...'talk5'; or a road position
+window.__jump = (where) => { finT0 = null; finK = 0; ['title', 'end', 'bThem', 'bMe', 'catch', 'hint'].forEach(hide); show('hud', 'block');
+  if (typeof where === 'number') { carX = where; stopI = STOPS.findIndex((st, i) => carX <= parkX(i)); if (stopI < 0) stopI = STOPS.length; }
+  else { stopI = +((where.match(/\d$/) || ['1'])[0]) - 1; carX = where === 'far' ? parkX(0) - 220 : parkX(stopI); }
+  speed = 0; phase = 'free'; show('pad', 'flex'); hud(era());
+  if (String(where).startsWith('talk')) { beginTalk(); lineI = 1; showLine(); } };
+/* ---------- radio: 30-second previews of Nadiia's picks, from Apple's public preview service ----------
+   Our own play/pause and next, so the music never blocks the drive. Each song links to Apple Music. */
+const TRACKS = [1810796700, 1810796703, 515382567, 1824045071];   // Lose My Mind, Just Keep Watching, A Real Hero, F1 (Hans Zimmer)
+const audio = new Audio(); audio.volume = .7;
+let songs = null, si = 0, eqTimer = 0, toastTimer = 0;
+// Apple's lookup service answers with a script (its own documented way), so no CORS header is needed
+function lookup(ids) {
+  return new Promise((ok, fail) => {
+    const cb = '__songs' + Date.now(), tag = document.createElement('script'), done = () => { delete window[cb]; tag.remove(); clearTimeout(timer); };
+    const timer = setTimeout(() => { done(); fail(new Error('timeout')); }, 8000);
+    window[cb] = d => { done(); ok(d); };
+    tag.onerror = () => { done(); fail(new Error('offline')); };
+    tag.src = 'https://itunes.apple.com/lookup?country=us&id=' + ids.join(',') + '&callback=' + cb;
+    document.head.appendChild(tag);
+  });
+}
+const SONGS_BACKUP = [                                            // in case the lookup is unreachable
+  { trackName: 'Lose My Mind (feat. Doja Cat)', artistName: 'Don Toliver', trackViewUrl: 'https://music.apple.com/us/album/lose-my-mind-feat-doja-cat/1810796698?i=1810796700',
+    previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/dc/8a/52/dc8a52e0-2c48-6ee0-c8f0-7b7188924f83/mzaf_10698934003919409505.plus.aac.p.m4a' },
+  { trackName: 'Just Keep Watching', artistName: 'Tate McRae', trackViewUrl: 'https://music.apple.com/us/album/just-keep-watching/1810796698?i=1810796703',
+    previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f1/29/27/f129275c-b8e8-e313-f3cd-a93ae234a6b5/mzaf_9933112702187355547.plus.aac.p.m4a' },
+  { trackName: 'A Real Hero', artistName: 'College & Electric Youth', trackViewUrl: 'https://music.apple.com/us/album/a-real-hero/515382484?i=515382567',
+    previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/d9/00/4fd900e0-712e-1025-09ed-41af0c15550c/mzaf_15857905276201263092.plus.aac.p.m4a' },
+  { trackName: 'F1', artistName: 'Hans Zimmer', trackViewUrl: 'https://music.apple.com/us/album/f1/1824045070?i=1824045071',
+    previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4d/93/31/4d933128-4ba2-c6c4-5003-3f5732a5bf43/mzaf_17978321712485872842.plus.aac.p.m4a' }];
+async function loadSongs() {
+  if (songs) return songs;
+  try { const d = await lookup(TRACKS); songs = TRACKS.map(id => d.results.find(r => r.trackId === id)).filter(r => r && r.previewUrl); }
+  catch (e) { songs = []; }
+  if (songs.length < TRACKS.length) songs = SONGS_BACKUP;
+  return songs;
+}
+function toast(text, href) {
+  $('tTitle').textContent = text; $('tLink').style.display = href ? '' : 'none'; if (href) $('tLink').href = href;
+  $('toast').classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').classList.remove('on'), 4000);
+}
+async function playSong(i) {
+  try { await loadSongs(); } catch (e) { toast('Radio is off air right now'); return; }
+  si = (i + songs.length) % songs.length; const s = songs[si];
+  audio.src = s.previewUrl; audio.play().catch(() => {});
+  toast('♪ ' + s.trackName + ' · ' + s.artistName, s.trackViewUrl);
+}
+audio.onended = () => playSong(si + 1);
+audio.onplay = audio.onpause = () => {
+  const on = !audio.paused;
+  $('rPlay').textContent = on ? '❚❚' : '▶'; $('rPlay').setAttribute('aria-label', on ? 'Pause music' : 'Play music');
+  clearInterval(eqTimer);
+  eqTimer = on ? setInterval(() => [...$('eq').children].forEach(b => b.style.height = 3 + Math.random() * 11 + 'px'), 120) : 0;
+  if (!on) [...$('eq').children].forEach(b => b.style.height = '3px');
+};
+$('rPlay').onclick = () => !audio.src ? playSong(0) : audio.paused ? audio.play() : audio.pause();
+$('rNext').onclick = () => playSong(audio.src ? si + 1 : 0);
+
+requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
