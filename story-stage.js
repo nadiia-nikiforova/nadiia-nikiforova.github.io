@@ -32,7 +32,8 @@
     const shut = document.createElement('button');
     shut.className = 'story-stage__close';
     shut.type = 'button';
-    shut.innerHTML = '<span aria-hidden="true">✕</span> Close';
+    shut.setAttribute('aria-label', 'Close the game');
+    shut.innerHTML = '<span aria-hidden="true">✕</span><span class="story-stage__label" aria-hidden="true">Close</span>';
     shut.addEventListener('click', close);
 
     const game = document.createElement('iframe');
