@@ -23,7 +23,8 @@
   // the cloud moves in chunky steps like the game, never a smooth blur.
   const LIFE_CELL = 8;   // cell size, CSS px
   const DOT = 2;         // dither square inside a cell
-  const BEAT = 80;       // ms per generation
+  const BEAT = 80;       // ms per generation, on a fast machine
+  const MAX_BEAT = 200;  // the slowest a weak machine is allowed to step
   const TONES = 5;       // flat colours taken from the cover's gradient
 
   const rgb = (c) => `rgb(${c.map(Math.round).join(',')})`;
@@ -62,15 +63,17 @@
     let W = 0, H = 0, round = 0, shots = [];   // the cover, and the screenshots on it
     let bx = BLEED;   // room at the sides: less where the cover already reaches the screen edge
     let px = -1e4, py = -1e4, mvx = 0, mvy = 0, inside = false;
-    let raf = 0, beat = 0;
+    let timer = 0, visible = false;
+    let delay = BEAT, damp = 1;   // stretched on a slow machine, see tick()
+    // Only cells inside this box can change, so each beat looks at the
+    // cloud and its surroundings, not the whole grid. Empty when i0 > i1.
+    let bi0 = 1, bi1 = 0, bj0 = 1, bj1 = 0;
 
-    // A cell drawn once at full resolution, then stamped wherever it lives.
-    function sprite(dpr, paint) {
+    // A cell drawn once, then stamped wherever it lives.
+    function sprite(paint) {
       const s = document.createElement('canvas');
-      s.width = s.height = LIFE_CELL * dpr;
-      const g = s.getContext('2d');
-      g.scale(dpr, dpr);
-      paint(g);
+      s.width = s.height = LIFE_CELL;
+      paint(s.getContext('2d'));
       return s;
     }
 
@@ -94,14 +97,16 @@
       // scroll sideways.
       const box = cover.getBoundingClientRect();
       bx = Math.max(0, Math.min(BLEED, box.left, document.documentElement.clientWidth - box.right));
-      const dpr = window.devicePixelRatio || 1;
       Object.assign(canvas.style, {
         left: `${cover.offsetLeft - bx}px`, top: `${cover.offsetTop - BLEED}px`,
         width: `${W + bx * 2}px`, height: `${H + BLEED * 2}px`,
       });
-      canvas.width = Math.round((W + bx * 2) * dpr);
-      canvas.height = Math.round((H + BLEED * 2) * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);   // origin at the canvas corner, BLEED outside the cover
+      // Drawn at 1 canvas pixel per CSS pixel and scaled up crisply by the
+      // browser (image-rendering: pixelated): pixel art loses nothing, and on
+      // a retina screen the canvas holds a quarter of the pixels.
+      canvas.width = Math.round(W + bx * 2);
+      canvas.height = Math.round(H + BLEED * 2);
+      // origin at the canvas corner, BLEED outside the cover
       floor = BLEED + H + 16;   // the cloud may spill only a little below, onto the title
 
       cols = Math.ceil((W + bx * 2) / LIFE_CELL); rows = Math.ceil((H + BLEED * 2) / LIFE_CELL);
@@ -109,6 +114,7 @@
       alive = new Uint8Array(n); next = new Uint8Array(n); age = new Uint8Array(n);
       span = new Uint8Array(n); energy = new Float32Array(n); accent = new Uint8Array(n); edge = new Float32Array(n); heat = new Float32Array(n);
       blocked = new Uint8Array(n);
+      bi0 = 1; bi1 = 0; bj0 = 1; bj1 = 0;
       for (let k = 0; k < n; k++) {
         const i = k % cols, j = (k - i) / cols;
         blocked[k] = onShot(i * LIFE_CELL + LIFE_CELL / 2 - bx, j * LIFE_CELL + LIFE_CELL / 2 - BLEED) ? 1 : 0;
@@ -144,8 +150,8 @@
         return rgb(c.map((v) => Math.min(255, Math.max(0, m + (v - m) * 3.2)) * 0.82));
       });
       papers = palette.map((c) => rgb(c.map((v) => v + (255 - v) * 0.4)));
-      solids = inks.map((ink) => sprite(dpr, (g) => { g.fillStyle = ink; g.fillRect(0, 0, LIFE_CELL, LIFE_CELL); }));
-      dithers = inks.map((ink, t) => sprite(dpr, (g) => {
+      solids = inks.map((ink) => sprite((g) => { g.fillStyle = ink; g.fillRect(0, 0, LIFE_CELL, LIFE_CELL); }));
+      dithers = inks.map((ink, t) => sprite((g) => {
         g.fillStyle = papers[t]; g.fillRect(0, 0, LIFE_CELL, LIFE_CELL);
         g.fillStyle = ink;
         for (let y = 0; y < LIFE_CELL; y += DOT) for (let x = 0; x < LIFE_CELL; x += DOT)
@@ -172,10 +178,16 @@
     function step() {
       const speed = Math.min(20, Math.hypot(mvx, mvy));
       if (inside) {
-        const reach = RADIUS * (0.85 + speed / 60);   // faster moves spread wider, up to a point
+        // Faster moves spread wider, up to a point; a slow machine gets a smaller cloud.
+        const reach = RADIUS * (0.85 + speed / 60) * damp;
         const cx = px + bx, cy = py + BLEED;
         const i0 = Math.max(0, Math.floor((cx - reach) / LIFE_CELL)), i1 = Math.min(cols - 1, Math.floor((cx + reach) / LIFE_CELL));
         const j0 = Math.max(0, Math.floor((cy - reach) / LIFE_CELL)), j1 = Math.min(rows - 1, Math.floor((cy + reach) / LIFE_CELL));
+        if (i0 <= i1 && j0 <= j1) {   // grow the box to take in the pointer's reach
+          const empty = bi0 > bi1 || bj0 > bj1;
+          bi0 = empty ? i0 : Math.min(bi0, i0); bi1 = empty ? i1 : Math.max(bi1, i1);
+          bj0 = empty ? j0 : Math.min(bj0, j0); bj1 = empty ? j1 : Math.max(bj1, j1);
+        }
         for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
           const d = Math.hypot(i * LIFE_CELL + LIFE_CELL / 2 - cx, j * LIFE_CELL + LIFE_CELL / 2 - cy);
           if (d >= reach || j * LIFE_CELL > floor || blocked[j * cols + i]) continue;
@@ -188,8 +200,11 @@
         }
       }
 
-      let busy = false;
-      for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      // Look one cell past the box: that is as far as the cloud can grow in a beat.
+      const li0 = Math.max(0, bi0 - 1), li1 = Math.min(cols - 1, bi1 + 1);
+      const lj0 = Math.max(0, bj0 - 1), lj1 = Math.min(rows - 1, bj1 + 1);
+      let ni0 = cols, ni1 = -1, nj0 = rows, nj1 = -1;
+      for (let j = lj0; j <= lj1; j++) for (let i = li0; i <= li1; i++) {
         const k = j * cols + i;
         let nb = 0;
         for (let b = -1; b <= 1; b++) for (let a = -1; a <= 1; a++) {
@@ -206,20 +221,25 @@
         // Energy smooths the flicker: a cell darkens over a few beats and
         // fades out through the textures, solid to dithered to outline.
         energy[k] = live ? Math.min(1, energy[k] + 0.34) : Math.max(0, energy[k] - 0.1);
-        if (energy[k] > 0 || live || heat[k] > 0) busy = true;
+        if (energy[k] > 0 || live || heat[k] > 0) {
+          if (i < ni0) ni0 = i; if (i > ni1) ni1 = i; if (j < nj0) nj0 = j; if (j > nj1) nj1 = j;
+        }
       }
       [alive, next] = [next, alive];
       mvx *= 0.4; mvy *= 0.4;   // a resting pointer calms down
-      return busy;
+      bi0 = ni0; bi1 = ni1; bj0 = nj0; bj1 = nj1;
+      return [li0, li1, lj0, lj1];
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, cols * LIFE_CELL, rows * LIFE_CELL);
+    // Redraw only the part of the canvas this beat looked at.
+    function draw([i0, i1, j0, j1]) {
+      if (i0 > i1 || j0 > j1) return;
+      ctx.clearRect(i0 * LIFE_CELL, j0 * LIFE_CELL, (i1 - i0 + 2) * LIFE_CELL, (j1 - j0 + 2) * LIFE_CELL);
       const outlines = inks.map(() => new Path2D());
-      for (let k = 0; k < energy.length; k++) {
-        const e = energy[k];
+      for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+        const k = j * cols + i, e = energy[k];
         if (e <= 0.1) continue;
-        const i = k % cols, j = (k - i) / cols, x = i * LIFE_CELL, y = j * LIFE_CELL, t = tone[k];
+        const x = i * LIFE_CELL, y = j * LIFE_CELL, t = tone[k];
         if (e > 0.8 && accent[k]) ctx.drawImage(solids[t], x, y, LIFE_CELL, LIFE_CELL);
         else if (e > 0.45) ctx.drawImage(dithers[t], x, y, LIFE_CELL, LIFE_CELL);
         else { ctx.fillStyle = papers[t]; ctx.fillRect(x, y, LIFE_CELL, LIFE_CELL); outlines[t].rect(x + 0.5, y + 0.5, LIFE_CELL, LIFE_CELL); }
@@ -228,8 +248,9 @@
       ctx.lineWidth = 1;
       outlines.forEach((path, t) => { ctx.strokeStyle = inks[t]; ctx.stroke(path); });
 
-      // Cut the screenshots out exactly, along their angled edges, so the
-      // cells sit in the gradient behind them and never cover the interface.
+      // Cut the screenshots out along their angled edges, so the cells sit
+      // in the gradient behind them and never cover the interface.
+      if (!shots.length) return;
       ctx.save();
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath(); ctx.roundRect(bx, BLEED, W, H, round); ctx.clip();
@@ -242,13 +263,40 @@
       ctx.restore();
     }
 
-    function frame(now) {
-      let busy = true;
-      if (now - beat >= BEAT) { beat = now; busy = step() || inside; draw(); }
-      raf = busy ? requestAnimationFrame(frame) : 0;
+    // Frame limiting: the loop wakes only once a beat, not on every screen
+    // refresh. Each beat is timed, and if a machine takes too long, the beat
+    // stretches and the cloud shrinks, so a weak laptop gets a lighter
+    // effect instead of a busy fan.
+    function tick() {
+      timer = 0;
+      if (!visible || document.hidden) return stop();
+      const t0 = performance.now();
+      draw(step());
+      const cost = performance.now() - t0;
+      const slow = Math.min(MAX_BEAT / BEAT, Math.max(1, cost / 6));
+      delay = delay * 0.7 + BEAT * slow * 0.3;
+      damp = Math.max(0.6, 1 / Math.sqrt(delay / BEAT));
+      if (inside || bi0 <= bi1) timer = setTimeout(tick, delay);
+    }
+
+    // Off screen or in a background tab: drop the cloud and sleep.
+    function stop() {
+      clearTimeout(timer); timer = 0; inside = false;
+      if (!ready) return;
+      alive.fill(0); energy.fill(0); heat.fill(0);
+      bi0 = 1; bi1 = 0; bj0 = 1; bj1 = 0;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Sample the colours before the first hover, while the browser is idle,
+    // so the first touch does not stutter.
+    function prepare() {
+      const later = window.requestIdleCallback || ((f) => setTimeout(f, 200));
+      later(() => { if (!ready) ready = build(); });
     }
 
     function track(e) {
+      if (!visible) return;
       if (!ready && !(ready = build())) return;
       const r = cover.getBoundingClientRect();
       const x = e.clientX - r.left, y = e.clientY - r.top;
@@ -257,12 +305,17 @@
       inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height && !onShot(x, y);
       mvx = was ? x - px : 0; mvy = was ? y - py : 0;
       px = x; py = y;
-      if (!raf) raf = requestAnimationFrame(frame);
+      if (inside && !timer) timer = setTimeout(tick, 0);
     }
 
     card.addEventListener('pointermove', track);
     card.addEventListener('pointerleave', () => { inside = false; });
-    new ResizeObserver(() => { ready = false; }).observe(cover);
+    new ResizeObserver(() => { ready = false; if (visible) prepare(); }).observe(cover);
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) { if (!ready) prepare(); } else stop();
+    }, { rootMargin: '200px' }).observe(cover);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
   }
 
   document.querySelectorAll('.card[data-pixel]').forEach(setupLife);

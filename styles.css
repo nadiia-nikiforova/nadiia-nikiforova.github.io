@@ -1418,6 +1418,7 @@ figcaption.mono {
   position: absolute;
   z-index: 1;
   pointer-events: none;
+  image-rendering: pixelated;   /* drawn at 1x, scaled up with hard edges */
   opacity: 0.62;
   transition: opacity var(--dur) var(--ease);
 }
