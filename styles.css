@@ -696,6 +696,11 @@ summary:focus-visible,
 
 .case-hero__shot .mono { color: rgba(11, 11, 12, 0.42); }
 
+/* An image shot fills its frame edge to edge, like the screenshots on the
+   home-page cards. Repeated here, after the base rule, because the base
+   rule's padding would otherwise win and leave a see-through frame. */
+.case-hero__shot.case-hero__shot--image { padding: 0; }
+
 /* Portrait variant, defined after the base so it actually wins. */
 .case-hero__shot.case-hero__shot--phone {
   left: auto;
