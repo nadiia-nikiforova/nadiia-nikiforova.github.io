@@ -3,3 +3,4 @@ Disallow: /work/healthcare-ai.html
 Disallow: /work/document-management.html
 Disallow: /work/govtech-platform.html
 Disallow: /work/design-system.html
+Disallow: /work/flex-academy.html

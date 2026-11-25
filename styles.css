@@ -681,7 +681,7 @@ summary:focus-visible,
 .case-hero__shot {
   position: absolute;
   z-index: 2;
-  right: -5%;
+  right: -1%;
   bottom: -11%;
   width: 46%;
   aspect-ratio: 16 / 10;
@@ -720,7 +720,7 @@ summary:focus-visible,
 @media (min-width: 1200px) {
   .case-hero__shot {
     width: 54%;
-    right: -9%;
+    right: -5%;
   }
 
   /* The portrait variant keeps its own proportions; only the wide shot grows. */
@@ -728,6 +728,15 @@ summary:focus-visible,
     width: 12%;
     right: 34%;
   }
+
+  /* Same gap between the text and the screenshot on every case (about 90px).
+     Titles and summaries differ in length, so each case sets its own offset.
+     print.lab keeps the base -5%. */
+  .case-hero--flex       .case-hero__shot { right: -9%; }
+  .case-hero--documents  .case-hero__shot { right: -3.3%; }
+  .case-hero--system     .case-hero__shot { right: -1.8%; }
+  .case-hero--govtech    .case-hero__shot { right: 0.8%; }
+  .case-hero--healthcare .case-hero__shot { right: 1.5%; }
 }
 
 /* 2. Decision block, the signature element. No card. It sits on the page at
